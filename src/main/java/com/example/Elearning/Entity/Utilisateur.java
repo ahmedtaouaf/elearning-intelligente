@@ -34,7 +34,7 @@ public class Utilisateur {
     @Column(nullable = false)
     private Boolean actif = true;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 

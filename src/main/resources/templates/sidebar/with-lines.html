@@ -1,0 +1,49 @@
+<html class="sidebar-with-line" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/vertical}">
+
+<head>
+    <th:block layout:fragment="title-meta">
+        <th:block th:replace="~{partials/title-meta :: title-meta('Sidebar with Lines')}" />
+    </th:block>
+
+</head>
+
+<body>
+    <th:block layout:fragment="content">
+
+        <div th:replace="~{partials/page-title :: page-title(
+                 'Sidebar with Lines',
+                 null
+                )}">
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-info alert-bordered border-start border-info d-flex align-items-start gap-2">
+                    <i class="ti ti-info-circle fs-xxl"></i>
+                    <div>
+                        If you want to display a line with each menu item, add the class
+                        <code>"sidebar-with-line"</code> to the
+                        <code>&lt;html&gt;</code> tag.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h4 class="m-0">Your custom content here</h4>
+                    </div> <!-- end card-body-->
+                </div> <!-- end card-->
+            </div> <!-- end col-->
+        </div>
+        <!-- end row-->
+
+    </th:block>
+
+    <th:block layout:fragment="javascripts"></th:block>
+
+</body>
+
+</html>

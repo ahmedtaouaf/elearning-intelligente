@@ -1,0 +1,27 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/vertical}">
+
+<head>
+    <th:block layout:fragment="title-meta">
+        <th:block th:replace="~{partials/title-meta :: title-meta('Starter Page')}" />
+    </th:block>
+
+</head>
+
+
+<body>
+    <th:block layout:fragment="content">
+
+        <div th:replace="~{partials/page-title :: page-title(
+                 'Pages',
+                 'Starter',
+                )}">
+        </div>
+
+
+    </th:block>
+
+    <th:block layout:fragment="javascripts"></th:block>
+
+</body>
+
+</html>

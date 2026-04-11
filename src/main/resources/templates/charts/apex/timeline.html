@@ -1,0 +1,124 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/vertical}">
+
+<head>
+    <th:block layout:fragment="title-meta">
+        <th:block th:replace="~{partials/title-meta :: title-meta('Timeline Apexcharts')}" />
+    </th:block>
+
+</head>
+
+
+<body>
+    <th:block layout:fragment="content">
+
+        <div th:replace="~{partials/page-title :: page-title(
+                 'Charts',
+                 'Timeline Apexchart',
+                )}">
+        </div>
+
+        <div class="row">
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Basic Timeline</h4>
+                    </div>
+                    <div class="card-body">
+                        <div dir="ltr">
+                            <div id="basic-timeline" class="apex-charts"></div>
+                        </div>
+                    </div>
+                    <!-- end card body-->
+                </div>
+                <!-- end card -->
+            </div>
+            <!-- end col-->
+
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Distributed Timeline</h4>
+                    </div>
+                    <div class="card-body">
+                        <div dir="ltr">
+                            <div id="distributed-timeline" class="apex-charts"></div>
+                        </div>
+                    </div>
+                    <!-- end card body-->
+                </div>
+                <!-- end card -->
+            </div>
+            <!-- end col-->
+        </div>
+        <!-- end row-->
+
+        <div class="row">
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Multi Series Timeline</h4>
+                    </div>
+                    <div class="card-body">
+                        <div dir="ltr">
+                            <div id="multi-series-timeline" class="apex-charts"></div>
+                        </div>
+                    </div>
+                    <!-- end card body-->
+                </div>
+                <!-- end card -->
+            </div>
+            <!-- end col-->
+
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Advanced Timeline</h4>
+                    </div>
+                    <div class="card-body">
+                        <div dir="ltr">
+                            <div id="advanced-timeline" class="apex-charts"></div>
+                        </div>
+                    </div>
+                    <!-- end card body-->
+                </div>
+                <!-- end card -->
+            </div>
+            <!-- end col-->
+        </div>
+        <!-- end row-->
+
+        <div class="row">
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Multiple Series - Group Rows</h4>
+                    </div>
+                    <div class="card-body">
+                        <div dir="ltr">
+                            <div id="group-rows-timeline" class="apex-charts"></div>
+                        </div>
+                    </div>
+                    <!-- end card body-->
+                </div>
+                <!-- end card -->
+            </div>
+            <!-- end col-->
+        </div>
+        <!-- end row-->
+
+    </th:block>
+
+    <th:block layout:fragment="javascripts">
+        <!-- Apex Chart js -->
+        <script src="/plugins/apexcharts/apexcharts.min.js"></script>
+
+        <!-- Moment js -->
+        <script src="/plugins/moment/moment.min.js"></script>
+
+        <!-- Apex Chart Timeline Demo js -->
+        <script src="/js/pages/chart-apex-timeline.js"></script>
+    </th:block>
+
+</body>
+
+</html>

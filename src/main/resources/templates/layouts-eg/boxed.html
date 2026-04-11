@@ -1,0 +1,51 @@
+<html data-layout-width="boxed" data-sidenav-size="on-hover" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/vertical}">
+
+<head>
+    <th:block layout:fragment="title-meta">
+        <th:block th:replace="~{partials/title-meta :: title-meta('Boxed Layout')}" />
+    </th:block>
+
+</head>
+
+<body>
+    <th:block layout:fragment="content">
+
+        <div th:replace="~{partials/page-title :: page-title(
+                 'Boxed',
+                 null
+                )}">
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-info alert-bordered border-start border-info d-flex align-items-start gap-2">
+                    <i class="ti ti-info-circle fs-xxl"></i>
+                    <div>
+                        To enable the boxed layout, add
+                        <code>data-layout-width="boxed"</code> to the
+                        <code>&lt;html&gt;</code> tag. For optimal spacing and usability, we also recommend adding
+                        <code>data-sidenav-size="on-hover"</code> to make the sidebar compact while keeping more room
+                        for content.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h4 class="m-0">Your custom content here</h4>
+                    </div> <!-- end card-body-->
+                </div> <!-- end card-->
+            </div> <!-- end col-->
+        </div>
+        <!-- end row-->
+
+    </th:block>
+
+    <th:block layout:fragment="javascripts"></th:block>
+
+</body>
+
+</html>

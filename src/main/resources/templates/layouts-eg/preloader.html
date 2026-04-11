@@ -1,0 +1,44 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/vertical}">
+
+<head>
+    <th:block layout:fragment="title-meta">
+        <th:block th:replace="~{partials/title-meta :: title-meta('Preloader Layout')}" />
+    </th:block>
+
+</head>
+
+<body>
+    <th:block layout:fragment="content">
+
+        <div th:replace="~{partials/page-title :: page-title(
+                 'Preloader',
+                 null
+                )}">
+        </div>
+
+        <!-- Preloader -->
+        <div id="preloader">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h4 class="m-0">Your custom content here</h4>
+                    </div> <!-- end card-body-->
+                </div> <!-- end card-->
+            </div> <!-- end col-->
+        </div>
+        <!-- end row-->
+
+    </th:block>
+
+    <th:block layout:fragment="javascripts"></th:block>
+
+</body>
+
+</html>
