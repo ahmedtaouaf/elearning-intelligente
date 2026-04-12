@@ -23,10 +23,11 @@ public class AdminUtilisateurController {
         this.roleRepository = roleRepository;
     }
 
-    // 📋 LISTE
     @GetMapping
     public String list(Model model) {
         model.addAttribute("utilisateurs", utilisateurService.getAll());
+        model.addAttribute("utilisateur", new Utilisateur());
+        model.addAttribute("roles", roleRepository.findAll());
         return "admin/utilisateurs/list";
     }
 
@@ -42,7 +43,6 @@ public class AdminUtilisateurController {
     // 💾 SAVE
     @PostMapping("/save")
     public String save(@ModelAttribute Utilisateur utilisateur) {
-
         Role role = roleRepository.findById(utilisateur.getRole().getId()).orElseThrow();
         utilisateur.setRole(role);
 

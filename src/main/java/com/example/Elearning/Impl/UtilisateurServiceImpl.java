@@ -33,8 +33,15 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     @Override
     public Utilisateur save(Utilisateur utilisateur) {
 
-        // 🔥 important : encoder le mot de passe
-        if (utilisateur.getMotDePasse() != null && !utilisateur.getMotDePasse().isEmpty()) {
+        if (utilisateur.getId() != null) {
+            Utilisateur oldUser = utilisateurRepository.findById(utilisateur.getId()).orElseThrow();
+
+            if (utilisateur.getMotDePasse() == null || utilisateur.getMotDePasse().isBlank()) {
+                utilisateur.setMotDePasse(oldUser.getMotDePasse());
+            } else {
+                utilisateur.setMotDePasse(passwordEncoder.encode(utilisateur.getMotDePasse()));
+            }
+        } else {
             utilisateur.setMotDePasse(passwordEncoder.encode(utilisateur.getMotDePasse()));
         }
 
