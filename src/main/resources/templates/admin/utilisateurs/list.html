@@ -554,22 +554,19 @@
                                     <td>
                                         <div class="d-flex justify-content-center gap-1">
 
-                                            <!-- VIEW -->
-                                            <a href="#" class="btn btn-default btn-icon btn-sm">
-                                                <i class="ti ti-eye fs-lg"></i>
-                                            </a>
-
                                             <!-- EDIT -->
                                             <button type="button"
                                                     class="btn btn-default btn-icon btn-sm"
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#editUserModal"
-                                                    th:attr="data-id=${u.id},
-                         data-nom=${u.nom},
-                         data-prenom=${u.prenom},
-                         data-email=${u.email},
-                         data-actif=${u.actif},
-                         data-roleid=${u.role.id}">
+
+                                                    th:data-id="${u.id}"
+                                                    th:data-nom="${u.nom}"
+                                                    th:data-prenom="${u.prenom}"
+                                                    th:data-email="${u.email}"
+                                                    th:data-actif="${u.actif}"
+                                                    th:data-roleid="${u.role.id}">
+
                                                 <i class="ti ti-edit fs-lg"></i>
                                             </button>
 
@@ -845,44 +842,40 @@
 </th:block>
 
 <th:block layout:fragment="javascripts">
-    <!-- Custom table -->
+
     <script src="/js/pages/custom-table.js"></script>
-</th:block>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
 
-        const editModal = document.getElementById("editUserModal");
-        if (editModal) {
-        editModal.addEventListener("show.bs.modal", function (event) {
-        const button = event.relatedTarget;
+            const editModal = document.getElementById("editUserModal");
 
-        document.getElementById("edit-id").value = button.getAttribute("data-id");
-        document.getElementById("edit-nom").value = button.getAttribute("data-nom");
-        document.getElementById("edit-prenom").value = button.getAttribute("data-prenom");
-        document.getElementById("edit-email").value = button.getAttribute("data-email");
-        document.getElementById("edit-role").value = button.getAttribute("data-roleid");
-        document.getElementById("edit-actif").value = button.getAttribute("data-actif");
+            if (!editModal) return;
 
-        document.getElementById("edit-password").value = "";
-    });
-    }
+            editModal.addEventListener("show.bs.modal", function (event) {
 
-        const deleteModal = document.getElementById("deleteUserModal");
-        if (deleteModal) {
-        deleteModal.addEventListener("show.bs.modal", function (event) {
-        const button = event.relatedTarget;
+                const button = event.relatedTarget;
 
-        const id = button.getAttribute("data-id");
-        const nom = button.getAttribute("data-nom");
-        const prenom = button.getAttribute("data-prenom");
+                if (!button) return;
 
-        document.getElementById("delete-user-name").textContent = nom + " " + prenom;
-        document.getElementById("delete-confirm-btn").setAttribute("href", "/admin/utilisateurs/delete/" + id);
-    });
-    }
+                console.log("BUTTON:", button); // 🔥 DEBUG
 
-    });
-</script>
+                document.getElementById("edit-id").value = button.getAttribute("data-id");
+                document.getElementById("edit-nom").value = button.getAttribute("data-nom");
+                document.getElementById("edit-prenom").value = button.getAttribute("data-prenom");
+                document.getElementById("edit-email").value = button.getAttribute("data-email");
+
+                document.getElementById("edit-role").value = button.getAttribute("data-roleid");
+
+                document.getElementById("edit-actif").value = button.getAttribute("data-actif");
+
+                document.getElementById("edit-password").value = "";
+            });
+
+        });
+    </script>
+
+</th:block>
 
 </body>
 
