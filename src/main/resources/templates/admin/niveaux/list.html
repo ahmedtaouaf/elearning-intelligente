@@ -1,0 +1,256 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/vertical}">
+
+<head>
+    <th:block layout:fragment="title-meta">
+        <th:block th:replace="~{partials/title-meta :: title-meta('User Roles')}" />
+    </th:block>
+
+</head>
+
+
+<body>
+<th:block layout:fragment="content">
+
+    <div class="row">
+        <div class="col-12">
+
+            <div class="d-flex align-items-sm-center flex-sm-row flex-column my-3">
+                <div class="flex-grow-1">
+                    <h4 class="fs-xl mb-1">Niveaux</h4>
+                    <p class="text-muted mb-0">Manage roles for smoother operations and secure access.</p>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div data-table data-table-rows-per-page="8" class="card">
+                        <div class="card-header border-light justify-content-between">
+
+                            <div class="d-flex gap-2">
+                                <div class="app-search">
+                                    <input data-table-search type="search" class="form-control"
+                                           placeholder="Recherche...">
+                                    <i data-lucide="search" class="app-search-icon text-muted"></i>
+                                </div>
+                                <button data-table-delete-selected class="btn btn-danger d-none">Delete</button>
+                            </div>
+
+
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="me-2 fw-semibold">Filtrer par:</span>
+
+                                <div>
+                                    <select data-table-set-rows-per-page
+                                            class="form-select form-control my-1 my-md-0">
+                                        <option value="5">5</option>
+                                        <option value="10">10</option>
+                                        <option value="15">15</option>
+                                        <option value="20">20</option>
+                                    </select>
+                                </div>
+
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#addNiveauModal"
+                                        class="btn btn-secondary">Nouveau Niveau</button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-custom table-select table-hover w-100 mb-0">
+                                <thead class="bg-light align-middle bg-opacity-25 thead-sm">
+                                <tr class="text-uppercase fs-xxs">
+                                    <th data-table-sort>ID</th>
+                                    <th data-table-sort="user">Nom du niveau</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="n : ${niveaux}">
+                                    <td data-column="roles">
+                                        <span class="badge bg-info-subtle text-info">
+                                            #ID[[${n.id}]]
+                                        </span>
+                                    </td>
+                                    <td data-column="roles">
+                                        <span class="badge bg-info-subtle text-info">
+                                            [[${n.nom}]]
+                                        </span>
+                                    </td>
+                                    <!-- ACTIONS -->
+                                    <td>
+                                        <div class="d-flex justify-content-center gap-1">
+
+                                            <!-- EDIT -->
+                                            <button type="button"
+                                                    class="btn btn-default btn-icon btn-sm"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#editNiveauModal"
+
+                                                    th:data-id="${n.id}"
+                                                    th:data-nom="${n.nom}">
+                                                <i class="ti ti-edit fs-lg"></i>
+                                            </button>
+
+                                            <!-- DELETE -->
+                                            <button type="button"
+                                                    class="btn btn-default btn-icon btn-sm"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#deleteNiveauModal"
+
+                                                    th:data-id="${n.id}"
+                                                    th:data-nom="${n.nom}">
+                                                <i class="ti ti-trash fs-lg"></i>
+                                            </button>
+
+                                        </div>
+                                    </td>
+
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-footer border-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div data-table-pagination-info="roles"></div>
+                                <div data-table-pagination></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!-- end col -->
+            </div><!-- end row -->
+
+        </div> <!-- end col-->
+    </div> <!-- end row-->
+
+    <div class="modal fade" id="editNiveauModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <form th:action="@{/admin/niveaux/save}" method="post">
+
+                <input type="hidden" name="id" id="edit-niveau-id">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Modifier Niveau</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <label class="form-label">Nom du niveau</label>
+                    <input type="text" name="nom" id="edit-niveau-nom"
+                           class="form-control" required>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-primary">Modifier</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+
+    <!-- Add User Modal -->
+    <div class="modal fade" id="addNiveauModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <form th:action="@{/admin/niveaux/save}" method="post">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">Ajouter Niveau</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <label class="form-label">Nom du niveau</label>
+                        <input type="text" name="nom" class="form-control"
+                               placeholder="Nom du niveau" required>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-primary">Enregistrer</button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteNiveauModal">
+        <div class="modal-dialog">
+            <div class="modal-content border-0 shadow">
+
+                <div class="modal-header bg-danger-subtle">
+                    <h5 class="modal-title text-danger">Supprimer Niveau</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <p>Voulez-vous supprimer ce niveau ?</p>
+                    <p class="fw-semibold" id="delete-niveau-name"></p>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-light" data-bs-dismiss="modal">Annuler</button>
+                    <a href="#" id="delete-niveau-btn" class="btn btn-danger">Supprimer</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</th:block>
+
+<th:block layout:fragment="javascripts">
+
+    <script src="/js/pages/custom-table.js"></script>
+
+    <script>
+        window.addEventListener("load", function () {
+
+            // EDIT
+            const editModal = document.getElementById("editNiveauModal");
+
+            editModal.addEventListener("show.bs.modal", function (event) {
+
+                const button = event.relatedTarget;
+
+                document.getElementById("edit-niveau-id").value =
+                    button.getAttribute("data-id");
+
+                document.getElementById("edit-niveau-nom").value =
+                    button.getAttribute("data-nom");
+
+            });
+
+            // DELETE
+            const deleteModal = document.getElementById("deleteNiveauModal");
+
+            deleteModal.addEventListener("show.bs.modal", function (event) {
+
+                const button = event.relatedTarget;
+
+                const id = button.getAttribute("data-id");
+                const nom = button.getAttribute("data-nom");
+
+                document.getElementById("delete-niveau-name").textContent = nom;
+
+                document.getElementById("delete-niveau-btn")
+                    .setAttribute("href", "/admin/niveaux/delete/" + id);
+
+            });
+
+        });
+    </script>
+
+</th:block>
+
+</body>
+
+</html>
