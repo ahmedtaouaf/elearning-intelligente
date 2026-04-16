@@ -1,0 +1,91 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/vertical}">
+
+<head>
+    <th:block layout:fragment="title-meta">
+        <th:block th:replace="~{partials/title-meta :: title-meta('Modules')}" />
+    </th:block>
+</head>
+
+<body>
+
+<th:block layout:fragment="content">
+
+    <div class="row">
+        <div class="col-12">
+
+            <!-- HEADER -->
+            <div class="d-flex align-items-sm-center flex-sm-row flex-column my-3">
+                <div class="flex-grow-1">
+                    <h4 class="fs-xl mb-1">
+                        Modules de : <span class="text-primary">[[${matiere.nom}]]</span>
+                    </h4>
+                    <p class="text-muted mb-0">Liste des modules de cette matière</p>
+                </div>
+            </div>
+
+            <!-- CARDS -->
+            <div class="row">
+
+                <div class="col-sm-6 col-lg-3" th:each="m : ${modules}">
+                    <div class="card h-100 shadow-sm">
+
+                        <!-- IMAGE -->
+                        <img src="/images/module.jpg" class="card-img-top">
+
+                        <div class="card-body d-flex flex-column">
+
+                            <!-- NOM -->
+                            <h5 class="card-title">
+                                [[${m.nom}]]
+                            </h5>
+
+                            <!-- DESCRIPTION -->
+                            <p class="text-muted small">
+                                [[${m.description}]]
+                            </p>
+
+                            <!-- INFOS -->
+                            <div class="mt-auto">
+
+                                <!-- MATIERE -->
+                                <span class="badge bg-info-subtle text-info mb-1">
+                                    [[${m.matiere.nom}]]
+                                </span>
+
+                                <!-- NIVEAU -->
+                                <span class="badge bg-success-subtle text-success mb-1">
+                                    [[${m.niveau.nom}]]
+                                </span>
+
+                                <!-- FILIERE -->
+                                <span class="badge bg-warning-subtle text-warning mb-1">
+                                    [[${m.filiere.nom}]]
+                                </span>
+
+                                <!-- ACTION -->
+                                <a href="#"
+                                   class="btn btn-primary w-100 mt-2">
+                                    Voir contenu
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</th:block>
+
+<th:block layout:fragment="javascripts">
+    <script src="/js/pages/custom-table.js"></script>
+</th:block>
+
+</body>
+</html>

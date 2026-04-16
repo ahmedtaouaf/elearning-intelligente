@@ -1,0 +1,330 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/vertical}">
+
+<head>
+    <th:block layout:fragment="title-meta">
+        <th:block th:replace="~{partials/title-meta :: title-meta('User Roles')}" />
+    </th:block>
+    <link rel="stylesheet" href="/plugins/select2/select2.min.css">
+</head>
+
+
+<body>
+<th:block layout:fragment="content">
+
+    <div class="row">
+        <div class="col-12">
+
+            <div class="d-flex align-items-sm-center flex-sm-row flex-column my-3">
+                <div class="flex-grow-1">
+                    <h4 class="fs-xl mb-1">Matieres</h4>
+                    <p class="text-muted mb-0">Manage roles for smoother operations and secure access.</p>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div data-table data-table-rows-per-page="8" class="card">
+                        <div class="card-header border-light justify-content-between">
+
+                            <div class="d-flex gap-2">
+                                <div class="app-search">
+                                    <input data-table-search type="search" class="form-control"
+                                           placeholder="Recherche...">
+                                    <i data-lucide="search" class="app-search-icon text-muted"></i>
+                                </div>
+                                <button data-table-delete-selected class="btn btn-danger d-none">Delete</button>
+                            </div>
+
+
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="me-2 fw-semibold">Filter By:</span>
+
+                                <!-- Records Per Page -->
+                                <div>
+                                    <select data-table-set-rows-per-page
+                                            class="form-select form-control my-1 my-md-0">
+                                        <option value="5">5</option>
+                                        <option value="10">10</option>
+                                        <option value="15">15</option>
+                                        <option value="20">20</option>
+                                    </select>
+                                </div>
+
+                                <button type="button" data-bs-toggle="modal"
+                                        data-bs-target="#addMatiereModal"
+                                        class="btn btn-secondary">Nouvelle Matière</button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-custom table-centered table-select table-hover w-100 mb-0">
+                                <thead class="bg-light align-middle bg-opacity-25 thead-sm">
+                                <tr class="text-uppercase fs-xxs">
+                                    <th class="ps-3" style="width: 1%;">
+                                        <input data-table-select-all
+                                               class="form-check-input form-check-input-light fs-14 mt-0"
+                                               type="checkbox" id="select-all-files" value="option">
+                                    </th>
+                                    <th data-table-sort>ID</th>
+                                    <th data-table-sort="user">Libelle</th>
+                                    <th data-table-sort data-column="status">Description</th>
+                                    <th data-table-sort data-column="status">Enseignant</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="m : ${matieres}">
+
+                                    <!-- Checkbox -->
+                                    <td class="ps-3">
+                                        <input class="form-check-input form-check-input-light fs-14 file-item-check mt-0"
+                                               type="checkbox">
+                                    </td>
+                                    <td>#MAT[[${m.id}]]</td>
+
+                                    <td>[[${m.nom}]]</td>
+
+                                    <td>[[${m.description}]]</td>
+
+                                    <td>
+                                        <span class="badge bg-success-subtle text-success">
+                                            [[${m.enseignant.nom}]] [[${m.enseignant.prenom}]]
+                                        </span>
+                                    </td>
+
+                                    <!-- ACTIONS -->
+                                    <td>
+                                        <div class="d-flex justify-content-center gap-1">
+
+                                            <!-- EDIT -->
+                                            <button type="button"
+                                                    class="btn btn-default btn-icon btn-sm"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#editMatiereModal"
+                                                    th:data-id="${m.id}"
+                                                    th:data-nom="${m.nom}"
+                                                    th:data-description="${m.description}"
+                                                    th:data-enseignant="${m.enseignant.id}">
+                                                <i class="ti ti-edit fs-lg"></i>
+                                            </button>
+
+                                            <!-- DELETE -->
+                                            <button type="button"
+                                                    class="btn btn-default btn-icon btn-sm"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#deleteMatiereModal"
+                                                    th:data-id="${m.id}"
+                                                    th:data-nom="${m.nom}">
+                                                <i class="ti ti-trash fs-lg"></i>
+                                            </button>
+
+                                        </div>
+                                    </td>
+
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-footer border-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div data-table-pagination-info="roles"></div>
+                                <div data-table-pagination></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div><!-- end row -->
+
+        </div> <!-- end col-->
+    </div> <!-- end row-->
+
+    <div class="modal fade" id="deleteMatiereModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content border-0 shadow">
+
+                <div class="modal-header bg-danger-subtle">
+                    <h5 class="modal-title text-danger">Supprimer une matière</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <p class="mb-2">
+                        Voulez-vous vraiment supprimer cette matière ?
+                    </p>
+                    <p class="fw-semibold mb-0" id="delete-matiere-name"></p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Annuler</button>
+                    <a id="delete-matiere-btn" class="btn btn-danger">Supprimer</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editMatiereModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header bg-warning-subtle">
+                    <h5 class="modal-title">Modifier un utilisateur</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <form th:action="@{/admin/matieres/save}" method="post">
+                    <div class="modal-body">
+                        <div class="row g-3">
+
+                            <input type="hidden" name="id" id="edit-matiere-id">
+                            <!-- NOM -->
+                            <div class="col-md-6">
+                                <label class="form-label">Nom</label>
+                                <input type="text" name="nom" id="edit-matiere-nom" class="form-control" placeholder="Nom matière" required>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="col-md-6">
+                                <label class="form-label">Description</label>
+                                <textarea type="text" name="description" id="edit-matiere-description" class="form-control" placeholder="Description" required> </textarea>
+                            </div>
+
+                            <!-- Enseignant -->
+                            <div class="col-md-6">
+                                <label for="edit-matiere-enseignant" class="form-label">Enseignant</label>
+                                <select id="edit-matiere-enseignant" class="form-control select2" data-toggle="select2" name="enseignant.id" required>
+                                    <option th:each="e : ${enseignants}"
+                                            th:value="${e.id}"
+                                            th:text="${e.nom + ' ' + e.prenom}">
+                                    </option>
+                                </select>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Mettre à jour</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addMatiereModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header bg-primary-subtle" >
+                <h5 class="modal-title">Nouvelle Matière</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form th:action="@{/admin/matieres/save}" method="post">
+
+                <div class="modal-body">
+                    <div class="row g-3">
+
+                        <!-- NOM -->
+                        <div class="col-md-6">
+                            <label class="form-label">Nom</label>
+                            <input type="text" name="nom" class="form-control" placeholder="Nom matière" required>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="col-md-6">
+                            <label class="form-label">Description</label>
+                            <textarea type="text" name="description" class="form-control" placeholder="Description" required> </textarea>
+                        </div>
+
+                        <!-- Enseignant -->
+                        <div class="col-md-6">
+                            <label for="select2BasicExample" class="form-label">Enseignant</label>
+                            <select id="select2BasicExample" class="form-control select2" data-toggle="select2" name="enseignant.id" required>
+                                <option th:each="e : ${enseignants}"
+                                        th:value="${e.id}"
+                                        th:text="${e.nom + ' ' + e.prenom}">
+                                </option>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+</th:block>
+
+<th:block layout:fragment="javascripts">
+
+    <!-- Jquery for select2-->
+    <script src="/plugins/jquery/jquery.min.js"></script>
+
+    <!-- Choises.js Plugin Js -->
+    <script src="/plugins/choices/choices.min.js"></script>
+
+    <!-- Select2 Plugin Js -->
+    <script src="/plugins/select2/select2.min.js"></script>
+
+    <!-- Choices Demo Js-->
+    <script src="/js/pages/form-choice.js"></script>
+
+    <!--Select 2 Demo js-->
+    <script src="/js/pages/form-select2.js"></script>
+    <script src="/js/pages/custom-table.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            // 1. FIX: Initialize Select2 with dropdownParent to enable the search box
+            $('#select2BasicExample').select2({
+                dropdownParent: $('#addMatiereModal'),
+                width: '100%'
+            });
+
+            // 2. EDIT MODAL LOGIC
+            const editModal = document.getElementById("editMatiereModal");
+            if (editModal) {
+                editModal.addEventListener("show.bs.modal", function (event) {
+                    const btn = event.relatedTarget;
+                    document.getElementById("edit-matiere-id").value = btn.getAttribute("data-id");
+                    document.getElementById("edit-matiere-nom").value = btn.getAttribute("data-nom");
+                    document.getElementById("edit-matiere-description").value = btn.getAttribute("data-description");
+                    document.getElementById("edit-matiere-enseignant").value = btn.getAttribute("data-enseignant");
+                });
+            }
+
+            // 3. DELETE MODAL LOGIC
+            const deleteModal = document.getElementById("deleteMatiereModal");
+            if (deleteModal) {
+                deleteModal.addEventListener("show.bs.modal", function (event) {
+                    const btn = event.relatedTarget;
+                    const id = btn.getAttribute("data-id");
+                    const nom = btn.getAttribute("data-nom");
+
+                    document.getElementById("delete-matiere-name").textContent = nom;
+                    document.getElementById("delete-matiere-btn").setAttribute("href", "/admin/matieres/delete/" + id);
+                });
+            }
+        });
+    </script>
+
+</th:block>
+
+</body>
+
+</html>

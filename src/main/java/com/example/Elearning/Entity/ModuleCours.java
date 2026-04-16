@@ -25,9 +25,6 @@ public class ModuleCours {
     @Column(length = 500)
     private String description;
 
-    @Column(length = 100)
-    private String filiere;
-
     @ManyToOne
     @JoinColumn(name = "matiere_id", nullable = false)
     private Matiere matiere;
@@ -35,6 +32,9 @@ public class ModuleCours {
     @ManyToOne
     @JoinColumn(name = "niveau_id", nullable = false)
     private Niveau niveau;
+    @ManyToOne
+    @JoinColumn(name = "filiere_id", nullable = false)
+    private Filiere filiere;
 
     @OneToMany(mappedBy = "module")
     @Builder.Default

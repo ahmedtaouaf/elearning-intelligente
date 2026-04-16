@@ -1,0 +1,429 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/vertical}">
+
+<head>
+    <th:block layout:fragment="title-meta">
+        <th:block th:replace="~{partials/title-meta :: title-meta('User Roles')}" />
+    </th:block>
+    <link rel="stylesheet" href="/plugins/select2/select2.min.css">
+</head>
+
+
+<body>
+<th:block layout:fragment="content">
+
+    <div class="row">
+        <div class="col-12">
+
+            <div class="d-flex align-items-sm-center flex-sm-row flex-column my-3">
+                <div class="flex-grow-1">
+                    <h4 class="fs-xl mb-1">Modules</h4>
+                    <p class="text-muted mb-0">Gérer les modules liés aux matières, niveaux et filières.</p>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div data-table data-table-rows-per-page="8" class="card">
+                        <div class="card-header border-light justify-content-between">
+
+                            <div class="d-flex gap-2">
+                                <div class="app-search">
+                                    <input data-table-search type="search" class="form-control"
+                                           placeholder="Recherche...">
+                                    <i data-lucide="search" class="app-search-icon text-muted"></i>
+                                </div>
+                                <button data-table-delete-selected class="btn btn-danger d-none">Delete</button>
+                            </div>
+
+
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="me-2 fw-semibold">Filter By:</span>
+
+                                <!-- Records Per Page -->
+                                <div>
+                                    <select data-table-set-rows-per-page
+                                            class="form-select form-control my-1 my-md-0">
+                                        <option value="5">5</option>
+                                        <option value="10">10</option>
+                                        <option value="15">15</option>
+                                        <option value="20">20</option>
+                                    </select>
+                                </div>
+
+                                <button type="button" data-bs-toggle="modal"
+                                        data-bs-target="#addModuleModal"
+                                        class="btn btn-secondary">Nouveau Module</button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-custom table-centered table-select table-hover w-100 mb-0">
+                                <thead class="bg-light align-middle bg-opacity-25 thead-sm">
+                                <tr class="text-uppercase fs-xxs">
+                                    <th class="ps-3" style="width: 1%;">
+                                        <input data-table-select-all
+                                               class="form-check-input form-check-input-light fs-14 mt-0"
+                                               type="checkbox" id="select-all-files" value="option">
+                                    </th>
+                                    <th>ID</th>
+                                    <th>Nom</th>
+                                    <th>Description</th>
+                                    <th>Matière</th>
+                                    <th>Niveau</th>
+                                    <th>Filière</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="m : ${modules}">
+
+                                    <!-- Checkbox -->
+                                    <td class="ps-3">
+                                        <input class="form-check-input form-check-input-light fs-14 mt-0" type="checkbox">
+                                    </td>
+
+                                    <!-- ID -->
+                                    <td>#MOD[[${m.id}]]</td>
+
+                                    <!-- NOM -->
+                                    <td>[[${m.nom}]]</td>
+
+                                    <!-- DESCRIPTION -->
+                                    <td>[[${m.description}]]</td>
+
+                                    <!-- MATIERE -->
+                                    <td>
+        <span class="badge bg-info-subtle text-info">
+            [[${m.matiere.nom}]]
+        </span>
+                                    </td>
+
+                                    <!-- NIVEAU -->
+                                    <td>
+        <span class="badge bg-success-subtle text-success">
+            [[${m.niveau.nom}]]
+        </span>
+                                    </td>
+
+                                    <!-- FILIERE -->
+                                    <td>
+        <span class="badge bg-warning-subtle text-warning">
+            [[${m.filiere.nom}]]
+        </span>
+                                    </td>
+
+                                    <!-- ACTIONS -->
+                                    <td>
+                                        <div class="d-flex justify-content-center gap-1">
+
+                                            <!-- EDIT -->
+                                            <button type="button"
+                                                    class="btn btn-default btn-icon btn-sm"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#editModuleModal"
+
+                                                    th:data-id="${m.id}"
+                                                    th:data-nom="${m.nom}"
+                                                    th:data-description="${m.description}"
+                                                    th:data-matiereid="${m.matiere.id}"
+                                                    th:data-niveauid="${m.niveau.id}"
+                                                    th:data-filiereid="${m.filiere.id}">
+                                                <i class="ti ti-edit fs-lg"></i>
+                                            </button>
+
+                                            <!-- DELETE -->
+                                            <button type="button"
+                                                    class="btn btn-default btn-icon btn-sm"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#deleteModuleModal"
+
+                                                    th:data-id="${m.id}"
+                                                    th:data-nom="${m.nom}">
+                                                <i class="ti ti-trash fs-lg"></i>
+                                            </button>
+
+                                        </div>
+                                    </td>
+
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-footer border-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div data-table-pagination-info="roles"></div>
+                                <div data-table-pagination></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div><!-- end row -->
+
+        </div> <!-- end col-->
+    </div> <!-- end row-->
+
+    <div class="modal fade" id="deleteModuleModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content border-0 shadow">
+
+                <div class="modal-header bg-danger-subtle">
+                    <h5 class="modal-title text-danger">Supprimer un module</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <p class="mb-2">
+                        Voulez-vous vraiment supprimer ce module ?
+                    </p>
+                    <p class="fw-semibold mb-0" id="delete-module-name"></p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Annuler</button>
+                    <a id="delete-module-btn" class="btn btn-danger">Supprimer</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editModuleModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header bg-warning-subtle">
+                    <h5 class="modal-title">Modifier un module</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <form th:action="@{/admin/modules/save}" method="post">
+                    <div class="modal-body">
+                        <div class="row g-3">
+
+                            <!-- ID -->
+                            <input type="hidden" name="id" id="edit-module-id">
+
+                            <!-- NOM -->
+                            <div class="col-md-6">
+                                <label class="form-label">Nom</label>
+                                <input type="text" name="nom" id="edit-module-nom"
+                                       class="form-control" placeholder="Nom module" required>
+                            </div>
+
+                            <!-- DESCRIPTION -->
+                            <div class="col-md-6">
+                                <label class="form-label">Description</label>
+                                <textarea name="description" id="edit-module-description"
+                                          class="form-control" placeholder="Description"></textarea>
+                            </div>
+
+                            <!-- MATIERE -->
+                            <div class="col-md-6">
+                                <label class="form-label">Matière</label>
+                                <select id="edit-module-matiere"
+                                        class="form-control select2"
+                                        name="matiere.id" required>
+                                    <option th:each="mat : ${matieres}"
+                                            th:value="${mat.id}"
+                                            th:text="${mat.nom}">
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- NIVEAU -->
+                            <div class="col-md-6">
+                                <label class="form-label">Niveau</label>
+                                <select id="edit-module-niveau"
+                                        class="form-control select2"
+                                        name="niveau.id" required>
+                                    <option th:each="n : ${niveaux}"
+                                            th:value="${n.id}"
+                                            th:text="${n.nom}">
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- FILIERE -->
+                            <div class="col-md-6">
+                                <label class="form-label">Filière</label>
+                                <select id="edit-module-filiere"
+                                        class="form-control select2"
+                                        name="filiere.id" required>
+                                    <option th:each="f : ${filieres}"
+                                            th:value="${f.id}"
+                                            th:text="${f.nom}">
+                                    </option>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Mettre à jour</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" id="addModuleModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header bg-primary-subtle">
+                    <h5 class="modal-title">Nouveau Module</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <form th:action="@{/admin/modules/save}" method="post">
+
+                    <div class="modal-body">
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <label class="form-label">Nom</label>
+                                <input type="text" name="nom" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Description</label>
+                                <textarea name="description" class="form-control"></textarea>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Matière</label>
+                                <select id="add-module-matiere" name="matiere.id" class="form-control select2" data-toggle="select2" required>
+                                    <option th:each="mat : ${matieres}"
+                                            th:value="${mat.id}"
+                                            th:text="${mat.nom}">
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Niveau</label>
+                                <select id="add-module-niveau" name="niveau.id" class="form-control select2" data-toggle="select2" required>
+                                    <option th:each="n : ${niveaux}"
+                                            th:value="${n.id}"
+                                            th:text="${n.nom}">
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Filière</label>
+                                <select id="add-module-filiere" name="filiere.id" class="form-control select2" data-toggle="select2" required>
+                                    <option th:each="f : ${filieres}"
+                                            th:value="${f.id}"
+                                            th:text="${f.nom}">
+                                    </option>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-primary">Enregistrer</button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</th:block>
+
+<th:block layout:fragment="javascripts">
+
+    <!-- Jquery for select2-->
+    <script src="/plugins/jquery/jquery.min.js"></script>
+
+    <!-- Choises.js Plugin Js -->
+    <script src="/plugins/choices/choices.min.js"></script>
+
+    <!-- Select2 Plugin Js -->
+    <script src="/plugins/select2/select2.min.js"></script>
+
+    <!-- Choices Demo Js-->
+    <script src="/js/pages/form-choice.js"></script>
+
+    <!--Select 2 Demo js-->
+    <script src="/js/pages/form-select2.js"></script>
+    <script src="/js/pages/custom-table.js"></script>
+
+    <script>
+
+        $('#add-module-matiere').select2({
+            dropdownParent: $('#addModuleModal')
+        });
+
+        $('#add-module-niveau').select2({
+            dropdownParent: $('#addModuleModal')
+        });
+
+        $('#add-module-filiere').select2({
+            dropdownParent: $('#addModuleModal')
+        });
+
+        $('#edit-module-matiere').select2({
+            dropdownParent: $('#editModuleModal')
+        });
+
+        $('#edit-module-niveau').select2({
+            dropdownParent: $('#editModuleModal')
+        });
+
+        $('#edit-module-filiere').select2({
+            dropdownParent: $('#editModuleModal')
+        });
+        // EDIT MODULE
+        const editModuleModal = document.getElementById("editModuleModal");
+
+        if (editModuleModal) {
+            editModuleModal.addEventListener("show.bs.modal", function (event) {
+
+                const btn = event.relatedTarget;
+
+                document.getElementById("edit-module-id").value = btn.getAttribute("data-id");
+                document.getElementById("edit-module-nom").value = btn.getAttribute("data-nom");
+                document.getElementById("edit-module-description").value = btn.getAttribute("data-description");
+
+                document.getElementById("edit-module-matiere").value = btn.getAttribute("data-matiereid");
+                document.getElementById("edit-module-niveau").value = btn.getAttribute("data-niveauid");
+                document.getElementById("edit-module-filiere").value = btn.getAttribute("data-filiereid");
+            });
+        }
+
+        // DELETE MODULE
+        const deleteModuleModal = document.getElementById("deleteModuleModal");
+
+        if (deleteModuleModal) {
+            deleteModuleModal.addEventListener("show.bs.modal", function (event) {
+
+                const btn = event.relatedTarget;
+
+                const id = btn.getAttribute("data-id");
+                const nom = btn.getAttribute("data-nom");
+
+                document.getElementById("delete-module-name").textContent = nom;
+
+                document.getElementById("delete-module-btn")
+                    .setAttribute("href", "/admin/modules/delete/" + id);
+            });
+        }
+    </script>
+
+</th:block>
+
+</body>
+
+</html>
