@@ -1,0 +1,155 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/vertical}">
+
+<head>
+    <th:block layout:fragment="title-meta">
+        <th:block th:replace="~{partials/title-meta :: title-meta('Contenu Module')}" />
+    </th:block>
+</head>
+
+<body>
+
+<th:block layout:fragment="content">
+
+    <div class="row">
+        <div class="col-12">
+
+            <!-- HEADER -->
+            <div class="d-flex align-items-sm-center flex-sm-row flex-column my-3">
+                <div class="flex-grow-1">
+                    <h4 class="fs-xl mb-1">
+                        Module : <span class="text-primary">[[${module.nom}]]</span>
+                    </h4>
+                    <p class="text-muted mb-0">[[${module.description}]]</p>
+
+                    <span class="badge bg-info-subtle text-info">
+                        [[${module.matiere.nom}]]
+                    </span>
+
+                    <span class="badge bg-success-subtle text-success">
+                        [[${module.niveau.nom}]]
+                    </span>
+
+                    <span class="badge bg-warning-subtle text-warning">
+                        [[${module.filiere.nom}]]
+                    </span>
+                </div>
+
+                <div>
+                    <button class="btn btn-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#uploadModal">
+                        Ajouter document
+                    </button>
+                </div>
+            </div>
+
+            <!-- SECTION DOCUMENTS -->
+            <div class="mb-3">
+                <h4 class="card-title">Documents du module</h4>
+            </div>
+
+            <!-- CARDS DOCUMENTS -->
+            <div class="row" th:if="${!#lists.isEmpty(documents)}">
+
+                <div class="col-md-6 col-lg-4" th:each="d : ${documents}">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="ti ti-file-text fs-4 text-primary"></i>
+                                <h4 class="card-title mb-0">[[${d.titre}]]</h4>
+                            </div>
+
+                            <span class="badge bg-secondary">
+                                [[${d.typeFichier}]]
+                            </span>
+                        </div>
+
+                        <div class="card-body d-flex flex-column">
+
+                            <p class="text-muted mb-2">
+                                <strong>Nom fichier :</strong> [[${d.nomFichier}]]
+                            </p>
+
+                            <p class="text-muted mb-2">
+                                <strong>Date upload :</strong> [[${d.dateUpload}]]
+                            </p>
+
+                            <p class="text-muted mb-3">
+                                <strong>Statut :</strong> [[${d.statut}]]
+                            </p>
+
+                            <div class="mt-auto d-flex gap-2">
+                                <a th:href="@{'/documents/download/' + ${d.id}}"
+                                   class="btn btn-sm btn-outline-primary w-100">
+                                    Télécharger
+                                </a>
+
+                                <a th:href="@{'/enseignant/documents/delete/' + ${d.id}}"
+                                   class="btn btn-sm btn-outline-danger w-100">
+                                    Supprimer
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- EMPTY -->
+            <div th:if="${#lists.isEmpty(documents)}" class="text-center mt-4">
+                <p class="text-muted">Aucun document dans ce module</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MODAL UPLOAD -->
+    <div class="modal fade" id="uploadModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <form th:action="@{/enseignant/documents/upload}"
+                      method="post"
+                      enctype="multipart/form-data">
+
+                    <input type="hidden" name="moduleId" th:value="${module.id}">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">Ajouter un document</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <input type="text" name="titre" class="form-control mb-2"
+                               placeholder="Titre document" required>
+
+                        <select name="typeFichier" class="form-control mb-2">
+                            <option value="PDF">PDF</option>
+                            <option value="RESUME">Résumé</option>
+                            <option value="QCM">QCM</option>
+                        </select>
+
+                        <input type="file" name="file" class="form-control" required>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Annuler</button>
+                        <button class="btn btn-primary">Uploader</button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</th:block>
+
+<th:block layout:fragment="javascripts">
+    <script src="/js/pages/custom-table.js"></script>
+</th:block>
+
+</body>
+</html>

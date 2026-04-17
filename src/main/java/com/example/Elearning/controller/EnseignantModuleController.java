@@ -50,4 +50,29 @@ public class EnseignantModuleController {
 
         return "enseignant/modules";
     }
+
+    @GetMapping("/enseignant/modules/{id}")
+    public String contenuModule(@PathVariable Long id,
+                                Authentication authentication,
+                                Model model) {
+
+        CustomUserDetails userDetails =
+                (CustomUserDetails) authentication.getPrincipal();
+
+        Utilisateur user = userDetails.getUtilisateur();
+
+        ModuleCours module = moduleCoursRepository.findById(id)
+                .orElseThrow();
+
+        // 🔐 sécurité : vérifier que ce module appartient à l'enseignant
+        if (!module.getMatiere().getEnseignant().getId().equals(user.getId())) {
+            throw new RuntimeException("Accès refusé !");
+        }
+
+        model.addAttribute("module", module);
+        model.addAttribute("documents", module.getDocuments());
+
+        return "enseignant/module-details";
+    }
+
 }
