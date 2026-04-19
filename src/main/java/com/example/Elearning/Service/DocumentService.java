@@ -37,41 +37,66 @@ public class DocumentService {
     }
 
     public void uploadDocument(String titre,
-                               String type,
                                MultipartFile file,
                                Long moduleId,
+                               String modeUpload,
+                               String aiType,
                                Utilisateur enseignant) throws IOException {
 
-        // 🔥 créer dossier si n'existe pas
         File directory = new File(uploadDir);
         if (!directory.exists()) {
             directory.mkdirs();
         }
 
-        // 🔥 nom fichier unique
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-
         Path filePath = Paths.get(uploadDir, fileName);
 
-        // 🔥 sauvegarde fichier
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
         ModuleCours module = moduleCoursRepository.findById(moduleId)
                 .orElseThrow();
 
-        // 🔥 créer document
+        String finalModeUpload;
+        String finalStatut;
+
+        if ("AI".equalsIgnoreCase(modeUpload)) {
+            finalModeUpload = (aiType != null && !aiType.isBlank()) ? aiType : "AI";
+            finalStatut = "EN_ATTENTE";
+        } else {
+            finalModeUpload = "STANDARD";
+            finalStatut = "VALIDE";
+        }
+
         Document document = Document.builder()
                 .titre(titre)
-                .nomFichier(file.getOriginalFilename())
+                .nomFichier(fileName)
                 .cheminFichier(filePath.toString())
-                .typeFichier(type)
+                .typeFichier("PDF")
                 .dateUpload(LocalDate.now())
-                .modeUpload("MANUEL")
-                .statut("VALIDE")
+                .modeUpload(finalModeUpload)
+                .statut(finalStatut)
                 .enseignant(enseignant)
                 .module(module)
                 .build();
 
         documentRepository.save(document);
+    }
+
+    public void deleteDocument(Long documentId, Utilisateur enseignant) throws IOException {
+
+        Document document = documentRepository.findById(documentId)
+                .orElseThrow();
+
+        // sécurité : vérifier que le document appartient bien à l'enseignant connecté
+        if (!document.getEnseignant().getId().equals(enseignant.getId())) {
+            throw new RuntimeException("Accès refusé : ce document n'appartient pas à cet enseignant.");
+        }
+
+        // supprimer le fichier physique si existe
+        Path filePath = Paths.get(document.getCheminFichier());
+        Files.deleteIfExists(filePath);
+
+        // supprimer en base
+        documentRepository.delete(document);
     }
 }

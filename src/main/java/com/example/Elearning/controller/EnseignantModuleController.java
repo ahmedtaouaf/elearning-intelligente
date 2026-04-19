@@ -1,9 +1,11 @@
 package com.example.Elearning.controller;
 
 import com.example.Elearning.Config.CustomUserDetails;
+import com.example.Elearning.Entity.Document;
 import com.example.Elearning.Entity.Matiere;
 import com.example.Elearning.Entity.ModuleCours;
 import com.example.Elearning.Entity.Utilisateur;
+import com.example.Elearning.Repository.DocumentRepository;
 import com.example.Elearning.Repository.MatiereRepository;
 import com.example.Elearning.Repository.ModuleCoursRepository;
 import org.springframework.security.core.Authentication;
@@ -19,10 +21,12 @@ public class EnseignantModuleController {
 
     private final ModuleCoursRepository moduleCoursRepository;
     private final MatiereRepository matiereRepository;
+    private final DocumentRepository documentRepository;
 
-    public EnseignantModuleController(ModuleCoursRepository moduleCoursRepository, MatiereRepository matiereRepository) {
+    public EnseignantModuleController(ModuleCoursRepository moduleCoursRepository, MatiereRepository matiereRepository, DocumentRepository documentRepository) {
         this.moduleCoursRepository = moduleCoursRepository;
         this.matiereRepository = matiereRepository;
+        this.documentRepository = documentRepository;
     }
 
     @GetMapping("/enseignant/matieres/{id}/modules")
@@ -73,6 +77,16 @@ public class EnseignantModuleController {
         model.addAttribute("documents", module.getDocuments());
 
         return "enseignant/module-details";
+    }
+
+    @GetMapping("/documents/view/{id}")
+    public String viewDocument(@PathVariable Long id, Model model) {
+        Document document = documentRepository.findById(id).orElseThrow();
+
+        model.addAttribute("pdfUrl", "/uploads/" + document.getNomFichier());
+        model.addAttribute("titre", document.getTitre());
+
+        return "enseignant/pdf-viewer";
     }
 
 }

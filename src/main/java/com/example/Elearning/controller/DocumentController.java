@@ -5,6 +5,8 @@ import com.example.Elearning.Entity.Utilisateur;
 import com.example.Elearning.Service.DocumentService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,9 +22,10 @@ public class DocumentController {
 
     @PostMapping("/enseignant/documents/upload")
     public String uploadDocument(@RequestParam String titre,
-                                 @RequestParam String typeFichier,
                                  @RequestParam("file") MultipartFile file,
                                  @RequestParam Long moduleId,
+                                 @RequestParam String modeUpload,
+                                 @RequestParam(required = false) String aiType,
                                  Authentication authentication) {
 
         try {
@@ -33,9 +36,10 @@ public class DocumentController {
 
             documentService.uploadDocument(
                     titre,
-                    typeFichier,
                     file,
                     moduleId,
+                    modeUpload,
+                    aiType,
                     user
             );
 
@@ -44,5 +48,26 @@ public class DocumentController {
         }
 
         return "redirect:/enseignant/modules/" + moduleId;
+    }
+
+    @GetMapping("/enseignant/documents/delete/{id}")
+    public String deleteDocument(@PathVariable Long id,
+                                 @RequestParam Long moduleId,
+                                 Authentication authentication) {
+
+        try {
+            CustomUserDetails userDetails =
+                    (CustomUserDetails) authentication.getPrincipal();
+
+            Utilisateur user = userDetails.getUtilisateur();
+
+            documentService.deleteDocument(id, user);
+
+            return "redirect:/enseignant/modules/" + moduleId;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/enseignant/modules/" + moduleId;
+        }
     }
 }

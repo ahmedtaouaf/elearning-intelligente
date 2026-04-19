@@ -1,10 +1,5 @@
-/**
- * Template Name: UBold - Admin & Dashboard Template
- * By (Author): Coderthemes
- * Module/App (File Name): Misc PDF Viewer
- */
 
-const url = 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf';
+const url = window.pdfUrl || '';
 let pdfDoc = null;
 let pageNum = 1;
 let pageRendering = false;

@@ -49,49 +49,76 @@
                 <h4 class="card-title">Documents du module</h4>
             </div>
 
-            <!-- CARDS DOCUMENTS -->
-            <div class="row" th:if="${!#lists.isEmpty(documents)}">
+            <!-- DOCUMENTS -->
+            <div th:if="${!#lists.isEmpty(documents)}">
 
-                <div class="col-md-6 col-lg-4" th:each="d : ${documents}">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <div class="d-flex align-items-center gap-2">
-                                <i class="ti ti-file-text fs-4 text-primary"></i>
-                                <h4 class="card-title mb-0">[[${d.titre}]]</h4>
+                <div class="card mb-3" th:each="d : ${documents}">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="avatar-md bg-primary-subtle rounded d-flex align-items-center justify-content-center">
+                                <i class="ti ti-file-text fs-3 text-primary"></i>
                             </div>
 
+                            <div>
+                                <h5 class="mb-0">[[${d.titre}]]</h5>
+                                <small class="text-muted">[[${d.nomFichier}]]</small>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2">
                             <span class="badge bg-secondary">
                                 [[${d.typeFichier}]]
                             </span>
-                        </div>
 
-                        <div class="card-body d-flex flex-column">
-
-                            <p class="text-muted mb-2">
-                                <strong>Nom fichier :</strong> [[${d.nomFichier}]]
-                            </p>
-
-                            <p class="text-muted mb-2">
-                                <strong>Date upload :</strong> [[${d.dateUpload}]]
-                            </p>
-
-                            <p class="text-muted mb-3">
-                                <strong>Statut :</strong> [[${d.statut}]]
-                            </p>
-
-                            <div class="mt-auto d-flex gap-2">
-                                <a th:href="@{'/documents/download/' + ${d.id}}"
-                                   class="btn btn-sm btn-outline-primary w-100">
-                                    Télécharger
-                                </a>
-
-                                <a th:href="@{'/enseignant/documents/delete/' + ${d.id}}"
-                                   class="btn btn-sm btn-outline-danger w-100">
-                                    Supprimer
+                            <div class="card-action">
+                                <a href="#!"
+                                   class="card-action-item"
+                                   data-action="card-toggle">
+                                    <i class="ti ti-chevron-up"></i>
                                 </a>
                             </div>
-
                         </div>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <p class="text-muted mb-2">
+                                    <strong>Date upload :</strong> [[${d.dateUpload}]]
+                                </p>
+
+                                <p class="text-muted mb-0">
+                                    <strong>Statut :</strong> [[${d.statut}]]
+                                </p>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="d-flex justify-content-md-end gap-2 mt-3 mt-md-0">
+                                    <a th:href="@{'/documents/download/' + ${d.id}}"
+                                       class="btn btn-sm btn-outline-primary">
+                                        Télécharger
+                                    </a>
+
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-danger"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteDocumentModal"
+                                            th:data-id="${d.id}"
+                                            th:data-titre="${d.titre}"
+                                            th:data-moduleid="${module.id}">
+                                        Supprimer
+                                    </button>
+
+                                    <a th:href="@{'/documents/view/' + ${d.id}}" target="_blank"
+                                       class="btn btn-sm btn-outline-info">
+                                        Consulter
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -105,9 +132,33 @@
         </div>
     </div>
 
+    <!-- MODAL Delete -->
+    <div class="modal fade" id="deleteDocumentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content border-0 shadow">
+
+                <div class="modal-header bg-danger-subtle">
+                    <h5 class="modal-title text-danger">Supprimer un document</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <p class="mb-2">Voulez-vous vraiment supprimer ce document ?</p>
+                    <p class="fw-semibold mb-0" id="delete-document-title"></p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Annuler</button>
+                    <a href="#" id="confirm-delete-document-btn" class="btn btn-danger">Supprimer</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL UPLOAD -->
     <div class="modal fade" id="uploadModal">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
 
                 <form th:action="@{/enseignant/documents/upload}"
@@ -122,21 +173,86 @@
                     </div>
 
                     <div class="modal-body">
-                        <input type="text" name="titre" class="form-control mb-2"
-                               placeholder="Titre document" required>
 
-                        <select name="typeFichier" class="form-control mb-2">
-                            <option value="PDF">PDF</option>
-                            <option value="RESUME">Résumé</option>
-                            <option value="QCM">QCM</option>
-                        </select>
+                        <div class="row g-3">
 
-                        <input type="file" name="file" class="form-control" required>
+                            <!-- TITRE -->
+                            <div class="col-12">
+                                <label class="form-label">Titre du document</label>
+                                <input type="text"
+                                       name="titre"
+                                       class="form-control"
+                                       placeholder="Titre document"
+                                       required>
+                            </div>
+
+                            <!-- FICHIER -->
+                            <div class="col-12">
+                                <label class="form-label">Fichier source</label>
+                                <input type="file"
+                                       name="file"
+                                       class="form-control"
+                                       accept=".pdf"
+                                       required>
+                                <small class="text-muted">Déposez un fichier PDF comme support de base.</small>
+                            </div>
+
+                            <!-- MODE DEPOT -->
+                            <div class="col-12">
+                                <label class="form-label">Mode de dépôt</label>
+                                <div class="d-flex gap-3 mt-2">
+
+                                    <div class="form-check">
+                                        <input class="form-check-input"
+                                               type="radio"
+                                               name="modeUpload"
+                                               id="modeStandard"
+                                               value="STANDARD"
+                                               checked>
+                                        <label class="form-check-label" for="modeStandard">
+                                            Dépôt standard
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input"
+                                               type="radio"
+                                               name="modeUpload"
+                                               id="modeAi"
+                                               value="AI">
+                                        <label class="form-check-label" for="modeAi">
+                                            Dépôt avec IA
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- OPTIONS IA -->
+                            <div class="col-12" id="aiOptions" style="display: none;">
+                                <div class="border rounded p-3 bg-light">
+                                    <label class="form-label">Génération IA</label>
+
+                                    <select name="aiType" class="form-select">
+                                        <option value="">Choisir un type de génération</option>
+                                        <option value="RESUME">Résumé</option>
+                                        <option value="QCM">QCM</option>
+                                        <option value="EXAMEN">Examen</option>
+                                    </select>
+
+                                    <small class="text-muted d-block mt-2">
+                                        Le système utilisera le document déposé pour générer automatiquement le contenu choisi.
+                                    </small>
+                                </div>
+                            </div>
+
+                        </div>
+
                     </div>
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Annuler</button>
-                        <button class="btn btn-primary">Uploader</button>
+                        <button class="btn btn-primary">Enregistrer</button>
                     </div>
 
                 </form>
@@ -149,6 +265,47 @@
 
 <th:block layout:fragment="javascripts">
     <script src="/js/pages/custom-table.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const modeStandard = document.getElementById("modeStandard");
+            const modeAi = document.getElementById("modeAi");
+            const aiOptions = document.getElementById("aiOptions");
+
+            function toggleAiOptions() {
+                if (modeAi.checked) {
+                    aiOptions.style.display = "block";
+                } else {
+                    aiOptions.style.display = "none";
+                }
+            }
+
+            modeStandard.addEventListener("change", toggleAiOptions);
+            modeAi.addEventListener("change", toggleAiOptions);
+
+            toggleAiOptions();
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const deleteModal = document.getElementById("deleteDocumentModal");
+
+            if (deleteModal) {
+                deleteModal.addEventListener("show.bs.modal", function (event) {
+                    const button = event.relatedTarget;
+
+                    const id = button.getAttribute("data-id");
+                    const titre = button.getAttribute("data-titre");
+                    const moduleId = button.getAttribute("data-moduleid");
+
+                    document.getElementById("delete-document-title").textContent = titre;
+
+                    document.getElementById("confirm-delete-document-btn")
+                        .setAttribute("href", "/enseignant/documents/delete/" + id + "?moduleId=" + moduleId);
+                });
+            }
+        });
+    </script>
 </th:block>
 
 </body>
