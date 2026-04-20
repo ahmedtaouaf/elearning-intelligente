@@ -11,9 +11,15 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${upload.dir}")
     private String uploadDir;
 
+    @Value("${temp.dir}")
+    private String tempDir;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("file:" + uploadDir + "/");
+
+        registry.addResourceHandler("/temp-preview/**")
+                .addResourceLocations("file:" + tempDir + "/");
     }
 }

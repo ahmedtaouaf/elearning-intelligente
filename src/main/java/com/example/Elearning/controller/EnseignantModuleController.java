@@ -79,7 +79,7 @@ public class EnseignantModuleController {
         return "enseignant/module-details";
     }
 
-    @GetMapping("/documents/view/{id}")
+    /*@GetMapping("/documents/view/{id}")
     public String viewDocument(@PathVariable Long id, Model model) {
         Document document = documentRepository.findById(id).orElseThrow();
 
@@ -87,6 +87,6 @@ public class EnseignantModuleController {
         model.addAttribute("titre", document.getTitre());
 
         return "enseignant/pdf-viewer";
-    }
+    }*/
 
 }

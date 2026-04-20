@@ -1,8 +1,11 @@
 package com.example.Elearning.Service;
 
+import com.example.Elearning.Dto.AIPreviewData;
+import com.example.Elearning.Entity.ContenuGenere;
 import com.example.Elearning.Entity.Document;
 import com.example.Elearning.Entity.ModuleCours;
 import com.example.Elearning.Entity.Utilisateur;
+import com.example.Elearning.Repository.ContenuGenereRepository;
 import com.example.Elearning.Repository.DocumentRepository;
 import com.example.Elearning.Repository.ModuleCoursRepository;
 import com.example.Elearning.Repository.UtilisateurRepository;
@@ -24,24 +27,37 @@ public class DocumentService {
     @Value("${upload.dir}")
     private String uploadDir;
 
+    @Value("${temp.dir}")
+    private String tempDir;
+
     private final DocumentRepository documentRepository;
     private final ModuleCoursRepository moduleCoursRepository;
     private final UtilisateurRepository utilisateurRepository;
+    private final ContenuGenereRepository contenuGenereRepository;
+    private final PdfTextService pdfTextService;
+    private final AiGenerationService aiGenerationService;
+    private final PdfPreviewService pdfPreviewService;
 
     public DocumentService(DocumentRepository documentRepository,
                            ModuleCoursRepository moduleCoursRepository,
-                           UtilisateurRepository utilisateurRepository) {
+                           UtilisateurRepository utilisateurRepository,
+                           ContenuGenereRepository contenuGenereRepository,
+                           PdfTextService pdfTextService,
+                           AiGenerationService aiGenerationService,
+                           PdfPreviewService pdfPreviewService) {
         this.documentRepository = documentRepository;
         this.moduleCoursRepository = moduleCoursRepository;
         this.utilisateurRepository = utilisateurRepository;
+        this.contenuGenereRepository = contenuGenereRepository;
+        this.pdfTextService = pdfTextService;
+        this.aiGenerationService = aiGenerationService;
+        this.pdfPreviewService = pdfPreviewService;
     }
 
-    public void uploadDocument(String titre,
-                               MultipartFile file,
-                               Long moduleId,
-                               String modeUpload,
-                               String aiType,
-                               Utilisateur enseignant) throws IOException {
+    public void uploadStandardDocument(String titre,
+                                       MultipartFile file,
+                                       Long moduleId,
+                                       Utilisateur enseignant) throws IOException {
 
         File directory = new File(uploadDir);
         if (!directory.exists()) {
@@ -53,19 +69,7 @@ public class DocumentService {
 
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-        ModuleCours module = moduleCoursRepository.findById(moduleId)
-                .orElseThrow();
-
-        String finalModeUpload;
-        String finalStatut;
-
-        if ("AI".equalsIgnoreCase(modeUpload)) {
-            finalModeUpload = (aiType != null && !aiType.isBlank()) ? aiType : "AI";
-            finalStatut = "EN_ATTENTE";
-        } else {
-            finalModeUpload = "STANDARD";
-            finalStatut = "VALIDE";
-        }
+        ModuleCours module = moduleCoursRepository.findById(moduleId).orElseThrow();
 
         Document document = Document.builder()
                 .titre(titre)
@@ -73,8 +77,8 @@ public class DocumentService {
                 .cheminFichier(filePath.toString())
                 .typeFichier("PDF")
                 .dateUpload(LocalDate.now())
-                .modeUpload(finalModeUpload)
-                .statut(finalStatut)
+                .modeUpload("STANDARD")
+                .statut("VALIDE")
                 .enseignant(enseignant)
                 .module(module)
                 .build();
@@ -82,21 +86,118 @@ public class DocumentService {
         documentRepository.save(document);
     }
 
+    public AIPreviewData prepareAiPreview(String titre,
+                                          MultipartFile file,
+                                          Long moduleId,
+                                          String aiType,
+                                          Utilisateur enseignant) throws IOException {
+
+        Path tempFolder = Paths.get(tempDir);
+        if (!Files.exists(tempFolder)) {
+            Files.createDirectories(tempFolder);
+        }
+
+        String sourceStoredFileName = System.currentTimeMillis() + "_source_" + file.getOriginalFilename();
+        Path sourceStoredPath = tempFolder.resolve(sourceStoredFileName);
+        Files.copy(file.getInputStream(), sourceStoredPath, StandardCopyOption.REPLACE_EXISTING);
+
+        String sourceText = pdfTextService.extractText(file);
+        String generatedText = aiGenerationService.generate(sourceText, aiType, titre);
+
+        String previewPdfPath = pdfPreviewService.createPreviewPdf(
+                "Prévisualisation IA - " + titre + " (" + aiType + ")",
+                generatedText
+        );
+
+        return AIPreviewData.builder()
+                .titre(titre)
+                .moduleId(moduleId)
+                .enseignantId(enseignant.getId())
+                .sourceStoredFileName(sourceStoredFileName)
+                .sourceStoredPath(sourceStoredPath.toString())
+                .sourceOriginalFileName(file.getOriginalFilename())
+                .aiType(aiType)
+                .generatedText(generatedText)
+                .previewPdfPath(previewPdfPath)
+                .build();
+    }
+
+    public void confirmAiPreview(AIPreviewData previewData, Utilisateur enseignant) throws IOException {
+        if (previewData == null) {
+            throw new RuntimeException("Aucune prévisualisation IA trouvée.");
+        }
+
+        if (!previewData.getEnseignantId().equals(enseignant.getId())) {
+            throw new RuntimeException("Accès refusé.");
+        }
+
+        Path uploadFolder = Paths.get(uploadDir);
+        if (!Files.exists(uploadFolder)) {
+            Files.createDirectories(uploadFolder);
+        }
+
+        // Le vrai fichier à enregistrer = le PDF généré
+        String generatedFileName = System.currentTimeMillis() + "_" + previewData.getAiType() + "_" + previewData.getTitre().replaceAll("[^a-zA-Z0-9-_]", "_") + ".pdf";
+        Path finalGeneratedPath = uploadFolder.resolve(generatedFileName);
+
+        Files.move(
+                Paths.get(previewData.getPreviewPdfPath()),
+                finalGeneratedPath,
+                StandardCopyOption.REPLACE_EXISTING
+        );
+
+        ModuleCours module = moduleCoursRepository.findById(previewData.getModuleId()).orElseThrow();
+
+        Document document = Document.builder()
+                .titre(previewData.getTitre())
+                .nomFichier(generatedFileName)
+                .cheminFichier(finalGeneratedPath.toString())
+                .typeFichier("PDF")
+                .dateUpload(LocalDate.now())
+                .modeUpload(previewData.getAiType())   // RESUME / QCM / EXAMEN
+                .statut("VALIDE")
+                .enseignant(enseignant)
+                .module(module)
+                .build();
+
+        Document savedDocument = documentRepository.save(document);
+
+        ContenuGenere contenuGenere = ContenuGenere.builder()
+                .typeContenu(previewData.getAiType())
+                .contenu(previewData.getGeneratedText())
+                .dateGeneration(LocalDate.now())
+                .valide(true)
+                .document(savedDocument)
+                .build();
+
+        contenuGenereRepository.save(contenuGenere);
+
+        // on supprime le PDF source temporaire, car tu ne veux pas le conserver
+        Files.deleteIfExists(Paths.get(previewData.getSourceStoredPath()));
+    }
+
+    public void cancelAiPreview(AIPreviewData previewData, Utilisateur enseignant) throws IOException {
+        if (previewData == null) {
+            return;
+        }
+
+        if (previewData.getEnseignantId().equals(enseignant.getId())) {
+            Files.deleteIfExists(Paths.get(previewData.getSourceStoredPath()));
+            Files.deleteIfExists(Paths.get(previewData.getPreviewPdfPath()));
+        }
+    }
+
     public void deleteDocument(Long documentId, Utilisateur enseignant) throws IOException {
+        Document document = documentRepository.findById(documentId).orElseThrow();
 
-        Document document = documentRepository.findById(documentId)
-                .orElseThrow();
-
-        // sécurité : vérifier que le document appartient bien à l'enseignant connecté
         if (!document.getEnseignant().getId().equals(enseignant.getId())) {
             throw new RuntimeException("Accès refusé : ce document n'appartient pas à cet enseignant.");
         }
 
-        // supprimer le fichier physique si existe
         Path filePath = Paths.get(document.getCheminFichier());
         Files.deleteIfExists(filePath);
 
-        // supprimer en base
         documentRepository.delete(document);
     }
 }
+

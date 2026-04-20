@@ -173,35 +173,22 @@
                     </div>
 
                     <div class="modal-body">
-
                         <div class="row g-3">
 
-                            <!-- TITRE -->
                             <div class="col-12">
                                 <label class="form-label">Titre du document</label>
-                                <input type="text"
-                                       name="titre"
-                                       class="form-control"
-                                       placeholder="Titre document"
-                                       required>
+                                <input type="text" name="titre" class="form-control" required>
                             </div>
 
-                            <!-- FICHIER -->
                             <div class="col-12">
                                 <label class="form-label">Fichier source</label>
-                                <input type="file"
-                                       name="file"
-                                       class="form-control"
-                                       accept=".pdf"
-                                       required>
-                                <small class="text-muted">Déposez un fichier PDF comme support de base.</small>
+                                <input type="file" name="file" class="form-control" accept=".pdf" required>
                             </div>
 
-                            <!-- MODE DEPOT -->
                             <div class="col-12">
                                 <label class="form-label">Mode de dépôt</label>
-                                <div class="d-flex gap-3 mt-2">
 
+                                <div class="d-flex gap-4 mt-2">
                                     <div class="form-check">
                                         <input class="form-check-input"
                                                type="radio"
@@ -221,33 +208,23 @@
                                                id="modeAi"
                                                value="AI">
                                         <label class="form-check-label" for="modeAi">
-                                            Dépôt avec IA
+                                            Génération avec IA
                                         </label>
                                     </div>
-
                                 </div>
                             </div>
 
-                            <!-- OPTIONS IA -->
                             <div class="col-12" id="aiOptions" style="display: none;">
-                                <div class="border rounded p-3 bg-light">
-                                    <label class="form-label">Génération IA</label>
-
-                                    <select name="aiType" class="form-select">
-                                        <option value="">Choisir un type de génération</option>
-                                        <option value="RESUME">Résumé</option>
-                                        <option value="QCM">QCM</option>
-                                        <option value="EXAMEN">Examen</option>
-                                    </select>
-
-                                    <small class="text-muted d-block mt-2">
-                                        Le système utilisera le document déposé pour générer automatiquement le contenu choisi.
-                                    </small>
-                                </div>
+                                <label class="form-label">Type de génération IA</label>
+                                <select name="aiType" class="form-select">
+                                    <option value="">Choisir...</option>
+                                    <option value="RESUME">Résumé</option>
+                                    <option value="QCM">QCM</option>
+                                    <option value="EXAMEN">Examen</option>
+                                </select>
                             </div>
 
                         </div>
-
                     </div>
 
                     <div class="modal-footer">
@@ -265,7 +242,23 @@
 
 <th:block layout:fragment="javascripts">
     <script src="/js/pages/custom-table.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const modeStandard = document.getElementById("modeStandard");
+            const modeAi = document.getElementById("modeAi");
+            const aiOptions = document.getElementById("aiOptions");
 
+            function toggleAiOptions() {
+                aiOptions.style.display = modeAi.checked ? "block" : "none";
+            }
+
+            if (modeStandard && modeAi && aiOptions) {
+                modeStandard.addEventListener("change", toggleAiOptions);
+                modeAi.addEventListener("change", toggleAiOptions);
+                toggleAiOptions();
+            }
+        });
+    </script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const modeStandard = document.getElementById("modeStandard");
