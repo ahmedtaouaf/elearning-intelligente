@@ -161,7 +161,8 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
 
-                <form th:action="@{/enseignant/documents/upload}"
+                <form id="uploadDocumentForm"
+                      th:action="@{/enseignant/documents/upload}"
                       method="post"
                       enctype="multipart/form-data">
 
@@ -215,13 +216,20 @@
                             </div>
 
                             <div class="col-12" id="aiOptions" style="display: none;">
-                                <label class="form-label">Type de génération IA</label>
-                                <select name="aiType" class="form-select">
-                                    <option value="">Choisir...</option>
-                                    <option value="RESUME">Résumé</option>
-                                    <option value="QCM">QCM</option>
-                                    <option value="EXAMEN">Examen</option>
-                                </select>
+                                <div class="border rounded p-3 bg-light">
+                                    <label class="form-label">Génération IA</label>
+
+                                    <select name="aiType" class="form-select">
+                                        <option value="">Choisir un type de génération</option>
+                                        <option value="RESUME">Résumé</option>
+                                        <option value="QCM">QCM</option>
+                                        <option value="EXAMEN">Examen</option>
+                                    </select>
+
+                                    <small class="text-muted d-block mt-2">
+                                        Le système utilisera le document déposé pour générer automatiquement le contenu choisi.
+                                    </small>
+                                </div>
                             </div>
 
                         </div>
@@ -229,11 +237,25 @@
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Annuler</button>
-                        <button class="btn btn-primary">Enregistrer</button>
+                        <button id="submitUploadBtn" class="btn btn-primary">Enregistrer</button>
                     </div>
-
                 </form>
 
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="loadingAiModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-body text-center py-5">
+                    <div class="spinner-grow avatar-lg text-secondary m-2" role="status"></div>
+
+                    <h5 class="mt-3 mb-2">Traitement IA en cours...</h5>
+                    <p class="text-muted mb-0">
+                        Veuillez patienter pendant la génération du document.
+                    </p>
+                </div>
             </div>
         </div>
     </div>
@@ -295,6 +317,56 @@
 
                     document.getElementById("confirm-delete-document-btn")
                         .setAttribute("href", "/enseignant/documents/delete/" + id + "?moduleId=" + moduleId);
+                });
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const modeStandard = document.getElementById("modeStandard");
+            const modeAi = document.getElementById("modeAi");
+            const aiOptions = document.getElementById("aiOptions");
+            const uploadForm = document.getElementById("uploadDocumentForm");
+            const submitBtn = document.getElementById("submitUploadBtn");
+            const uploadModalEl = document.getElementById("uploadModal");
+            const loadingModalEl = document.getElementById("loadingAiModal");
+
+            function toggleAiOptions() {
+                if (modeAi && aiOptions) {
+                    aiOptions.style.display = modeAi.checked ? "block" : "none";
+                }
+            }
+
+            if (modeStandard && modeAi) {
+                modeStandard.addEventListener("change", toggleAiOptions);
+                modeAi.addEventListener("change", toggleAiOptions);
+                toggleAiOptions();
+            }
+
+            if (uploadForm) {
+                uploadForm.addEventListener("submit", function (e) {
+                    const isAiMode = modeAi && modeAi.checked;
+
+                    if (isAiMode) {
+                        if (submitBtn) {
+                            submitBtn.disabled = true;
+                            submitBtn.innerText = "Traitement...";
+                        }
+
+                        // fermer le modal upload
+                        if (uploadModalEl) {
+                            const uploadModal = bootstrap.Modal.getInstance(uploadModalEl);
+                            if (uploadModal) {
+                                uploadModal.hide();
+                            }
+                        }
+
+                        // ouvrir le modal loading
+                        if (loadingModalEl) {
+                            const loadingModal = new bootstrap.Modal(loadingModalEl);
+                            loadingModal.show();
+                        }
+                    }
                 });
             }
         });
