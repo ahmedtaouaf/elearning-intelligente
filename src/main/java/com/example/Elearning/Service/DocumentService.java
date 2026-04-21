@@ -104,10 +104,7 @@ public class DocumentService {
         String sourceText = pdfTextService.extractText(file);
         String generatedText = aiGenerationService.generate(sourceText, aiType, titre);
 
-        String previewPdfPath = pdfPreviewService.createPreviewPdf(
-                "Prévisualisation IA - " + titre + " (" + aiType + ")",
-                generatedText
-        );
+        String previewPdfPath = pdfPreviewService.createPreviewPdf(titre, generatedText, aiType);;
 
         return AIPreviewData.builder()
                 .titre(titre)

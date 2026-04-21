@@ -66,58 +66,89 @@ public class AiGenerationService {
         }
 
         return switch (aiType.toUpperCase()) {
-            case "RESUME" -> """
-                    Tu es un assistant pédagogique.
-                    Génère un résumé clair, structuré et fidèle du document suivant.
-                    Langue de sortie : français.
-                    Titre du document : %s
-
-                    Contraintes :
-                    - Résumé bien organisé
-                    - Utiliser des titres et sous-titres
-                    - Ne pas inventer d'informations
-                    - Style académique simple
-
-                    Contenu source :
-                    %s
-                    """.formatted(titre, cleaned);
-
-            case "QCM" -> """
-                    Tu es un assistant pédagogique.
-                    Génère un QCM en français à partir du document suivant.
-
-                    Contraintes :
-                    - 10 questions
-                    - 4 choix par question
-                    - Indiquer la bonne réponse après chaque question
-                    - Niveau universitaire
-                    - Ne pas inventer des notions absentes du document
-
-                    Titre du document : %s
-
-                    Contenu source :
-                    %s
+                                case "RESUME" -> """
+                            Tu es un assistant pédagogique.
+                            Génère un résumé clair, structuré et fidèle du document suivant.
                     
+                            Contraintes importantes :
+                            - Réponds directement sans introduction
+                            - N’écris pas "Voici le résumé", "Absolument", "Bien sûr"
+                            - Commence directement par le titre
+                            - Utiliser des sections claires
+                            - Ne pas inventer d'informations
+                            - Style académique simple
                     
+                            Format attendu :
+                            TITRE: Résumé de ...
+                            SECTION: Introduction
+                            ...
+                            SECTION: Idées principales
+                            ...
+                            SECTION: Conclusion
+                            ...
+                            
+                            Titre du document : %s
                     
-                    """.formatted(titre, cleaned);
+                            Contenu source :
+                            %s
+                            """.formatted(titre, cleaned);
 
-            case "EXAMEN" -> """
-                    Tu es un assistant pédagogique.
-                    Génère un sujet d'examen en français à partir du document suivant.
+                                case "QCM" -> """
+                            Tu es un assistant pédagogique.
+                            Génère un QCM en français à partir du document suivant.
+                    
+                            Contraintes importantes :
+                            - Réponds directement sans introduction
+                            - N’écris pas de phrases comme "Voici un QCM", "Absolument", "Bien sûr"
+                            - Ne mets aucun commentaire avant le contenu
+                            - Commence directement par le titre du QCM
+                            - 10 questions
+                            - 4 choix par question
+                            - Indiquer la bonne réponse après chaque question
+                            - Niveau universitaire
+                            - Ne pas inventer des notions absentes du document
+                            Format attendu :
+                            TITRE: QCM sur ...
+                            QUESTION 1:
+                            Texte de la question
+                            A) ...
+                            B) ...
+                            C) ...
+                            D) ...
+                            REPONSE: ...
+                            
+                            Titre du document : %s
+                    
+                            Contenu source :
+                            %s
+                            """.formatted(titre, cleaned);
 
-                    Contraintes :
-                    - Structure claire
-                    - Questions pertinentes et académiques
-                    - Niveau universitaire
-                    - Ne pas inventer d'informations hors document
-                    - Organiser le sujet avec titres
-
-                    Titre du document : %s
-
-                    Contenu source :
-                    %s
-                    """.formatted(titre, cleaned);
+                                case "EXAMEN" -> """
+                            Tu es un assistant pédagogique.
+                            Génère un sujet d'examen en français à partir du document suivant.
+                    
+                            Contraintes importantes :
+                            - Réponds directement sans introduction
+                            - N’écris pas "Voici un examen", "Absolument", "Bien sûr"
+                            - Commence directement par le titre
+                            - Structure claire
+                            - Niveau universitaire
+                            - Ne pas inventer d'informations hors document
+                    
+                            Format attendu :
+                            TITRE: Examen sur ...
+                            SECTION: Consignes
+                            ...
+                            SECTION: Partie 1
+                            ...
+                            SECTION: Partie 2
+                            ...
+                    
+                            Titre du document : %s
+                    
+                            Contenu source :
+                            %s
+                            """.formatted(titre, cleaned);
 
             default -> throw new RuntimeException("Type IA non reconnu : " + aiType);
         };
