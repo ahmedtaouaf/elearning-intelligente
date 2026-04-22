@@ -66,32 +66,39 @@ public class AiGenerationService {
         }
 
         return switch (aiType.toUpperCase()) {
-                                case "RESUME" -> """
-                            Tu es un assistant pédagogique.
-                            Génère un résumé clair, structuré et fidèle du document suivant.
-                    
-                            Contraintes importantes :
-                            - Réponds directement sans introduction
-                            - N’écris pas "Voici le résumé", "Absolument", "Bien sûr"
-                            - Commence directement par le titre
-                            - Utiliser des sections claires
-                            - Ne pas inventer d'informations
-                            - Style académique simple
-                    
-                            Format attendu :
-                            TITRE: Résumé de ...
-                            SECTION: Introduction
-                            ...
-                            SECTION: Idées principales
-                            ...
-                            SECTION: Conclusion
-                            ...
-                            
-                            Titre du document : %s
-                    
-                            Contenu source :
-                            %s
-                            """.formatted(titre, cleaned);
+            case "RESUME" -> """
+        Tu es un assistant pédagogique.
+        Génère un résumé clair, structuré et académique en français à partir du document suivant.
+
+        Contraintes importantes :
+        - Réponds directement sans introduction
+        - N’écris pas "Voici le résumé", "Absolument", "Bien sûr"
+        - N’utilise pas de markdown
+        - N’écris pas "TITRE:" ni "SECTION:"
+        - Le résultat doit être bien organisé et facile à convertir en PDF
+        - Utiliser uniquement cette structure :
+
+        RESUME
+        Introduction
+        [paragraphe]
+
+        Idées principales
+        [paragraphe ou points]
+
+        Analyse
+        [paragraphe]
+
+        Conclusion
+        [paragraphe]
+
+        - Ne pas inventer d’informations
+        - Style académique simple et clair
+
+        Titre du document : %s
+
+        Contenu source :
+        %s
+        """.formatted(titre, cleaned);
 
                                 case "QCM" -> """
                             Tu es un assistant pédagogique.

@@ -47,11 +47,12 @@ public class PdfPreviewService {
 
             // 🔥 1. TITRE PRINCIPAL
             cs.beginText();
-            cs.setFont(boldFont, 18);
+            cs.setNonStrokingColor(0f / 255f, 102f / 255f, 204f / 255f);
+            cs.setFont(boldFont, 20);
             cs.newLineAtOffset(margin, y);
             cs.showText(title);
             cs.endText();
-
+            cs.setNonStrokingColor(0f, 0f, 0f);
             y -= 30;
 
             // 🔥 Nettoyage du texte (très important)
@@ -76,7 +77,38 @@ public class PdfPreviewService {
                     continue;
                 }
 
-                // TITRES QUESTIONS
+                // ===== CAS RESUME =====
+                if ("RESUME".equalsIgnoreCase(aiType)) {
+
+                    // titre principal interne
+                    if (line.equalsIgnoreCase("RESUME")) {
+                        y -= 10;
+                        cs.setNonStrokingColor(40f / 255f, 40f / 255f, 40f / 255f);
+                        y = writeWrappedLine(cs, boldFont, 16, margin, y, "Résumé", 70, leading + 4);
+                        cs.setNonStrokingColor(0f, 0f, 0f);                        y -= 10;
+                        continue;
+                    }
+
+                    // sous-titres du résumé
+                    if (line.equalsIgnoreCase("Introduction")
+                            || line.equalsIgnoreCase("Idées principales")
+                            || line.equalsIgnoreCase("Analyse")
+                            || line.equalsIgnoreCase("Conclusion")) {
+
+                        y -= 8;
+                        cs.setNonStrokingColor(0f / 255f, 102f / 255f, 204f / 255f);
+                        y = writeWrappedLine(cs, boldFont, 13, margin, y, line, 70, leading + 2);
+                        cs.setNonStrokingColor(0f, 0f, 0f);                        y -= 4;
+                        continue;
+                    }
+
+                    // texte normal résumé
+                    y = writeWrappedLine(cs, normalFont, 11, margin, y, line, 90, leading);
+                    continue;
+                }
+
+                // ===== CAS QCM / EXAMEN =====
+
                 if (line.toLowerCase().startsWith("question")) {
                     y -= 10;
                     y = writeWrappedLine(cs, boldFont, 13, margin, y, line, 75, leading + 2);
@@ -84,24 +116,21 @@ public class PdfPreviewService {
                     continue;
                 }
 
-                // REPONSES
                 if (line.toLowerCase().startsWith("réponse")) {
-                    cs.setNonStrokingColor(0, 102, 204);
+                    cs.setNonStrokingColor(0f / 255f, 102f / 255f, 204f / 255f);
                     y = writeWrappedLine(cs, boldFont, 11, margin + 10, y, line, 75, leading);
-                    cs.setNonStrokingColor(0, 0, 0);
+                    cs.setNonStrokingColor(0f, 0f, 0f);
                     continue;
                 }
 
-                // CHOIX QCM
                 if (line.matches("^[a-dA-D]\\).*")) {
                     y = writeWrappedLine(cs, normalFont, 11, margin + 20, y, line, 70, leading);
                     continue;
                 }
 
-                // SEPARATEUR
                 if (line.contains("---")) {
                     y -= 8;
-                    cs.setStrokingColor(180, 180, 180);
+                    cs.setStrokingColor(180f / 255f, 180f / 255f, 180f / 255f);
                     cs.moveTo(margin, y);
                     cs.lineTo(300, y);
                     cs.stroke();
@@ -109,7 +138,6 @@ public class PdfPreviewService {
                     continue;
                 }
 
-                // TEXTE NORMAL
                 y = writeWrappedLine(cs, normalFont, 11, margin, y, line, 90, leading);
             }
 
@@ -127,12 +155,13 @@ public class PdfPreviewService {
                 .replace("##", "")
                 .replace("#", "")
                 .replace("\t", " ")
+                .replace("TITRE:", "")
+                .replace("SECTION:", "")
                 .replace("Absolument !", "")
                 .replace("Absolument!", "")
-                .replace("Voici un QCM de 10 questions, niveau universitaire, basé sur le document fourni, avec la bonne réponse indiquée après chaque question.", "")
-                .replace("Voici un QCM", "")
                 .replace("Voici le résumé", "")
-                .replace("Voici un examen", "")
+                .replace("Voici un résumé", "")
+                .replace("Bien sûr,", "")
                 .trim();
     }
     private void writeLine(PDPageContentStream cs,
