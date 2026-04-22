@@ -11,8 +11,7 @@
 <th:block layout:fragment="content">
 
     <div class="row">
-        <div class="col-12">
-
+        <div class="col-xl-8">
             <div class="d-flex align-items-sm-center flex-sm-row flex-column my-3">
                 <div class="flex-grow-1">
                     <h4 class="fs-xl mb-1">
@@ -76,7 +75,72 @@
 
                 </div>
             </div>
+        </div>
 
+        <div class="col-xl-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Agent IA</h4>
+                </div>
+
+                <div class="card-body py-0" style="height: 380px;" id="chat-container" data-simplebar>
+
+                    <div th:each="msg : ${messages}"
+                         class="d-flex align-items-start gap-2 my-3 chat-item"
+                         th:classappend="${msg.sender == 'USER'} ? 'justify-content-end' : ''">
+
+                        <div th:if="${msg.sender == 'AI'}" class="d-flex align-items-start gap-2">
+                            <img src="/images/ai.png" class="avatar-md rounded-circle" alt="AI">
+                            <div>
+                                <div class="chat-message py-2 px-3 bg-warning-subtle rounded" th:text="${msg.message}"></div>
+                                <div class="text-muted fs-xs mt-1">
+                                    <i class="ti ti-clock"></i> [[${msg.time}]]
+                                </div>
+                            </div>
+                        </div>
+
+                        <div th:if="${msg.sender == 'USER'}">
+                            <div class="chat-message py-2 px-3 bg-primary-subtle rounded text-end" th:text="${msg.message}"></div>
+                            <div class="text-muted fs-xs mt-1 text-end">
+                                <i class="ti ti-clock"></i> [[${msg.time}]]
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-footer bg-body-secondary border-top border-dashed border-bottom-0">
+                    <form th:action="@{/enseignant/documents/preview/revise}" method="post">
+                        <div class="d-flex gap-2">
+                            <div class="app-search flex-grow-1">
+                                <input type="text"
+                                       name="instruction"
+                                       class="form-control bg-light-subtle border-light"
+                                       placeholder="Ex: Je veux 15 questions"
+                                       required>
+                                <i data-lucide="message-square" class="app-search-icon text-muted"></i>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-icon">
+                                <i class="ti ti-send-2 fs-xl"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="loadingAiModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-body text-center py-5">
+                    <div class="spinner-grow avatar-lg text-secondary m-2" role="status"></div>
+                    <h5 class="mt-3 mb-2">Mise à jour en cours...</h5>
+                    <p class="text-muted mb-0">L’IA modifie le document selon votre consigne.</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -85,6 +149,21 @@
 <th:block layout:fragment="javascripts">
     <script th:inline="javascript">
         window.pdfUrl = /*[[${pdfUrl}]]*/ '';
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const reviseForm = document.querySelector('form[action="/enseignant/documents/preview/revise"]');
+            const loadingModalEl = document.getElementById("loadingAiModal");
+
+            if (reviseForm) {
+                reviseForm.addEventListener("submit", function () {
+                    if (loadingModalEl) {
+                        const loadingModal = new bootstrap.Modal(loadingModalEl);
+                        loadingModal.show();
+                    }
+                });
+            }
+        });
     </script>
 
     <script src="/plugins/pdfjs/pdf.min.js"></script>

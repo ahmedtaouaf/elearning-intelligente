@@ -160,4 +160,57 @@ public class AiGenerationService {
             default -> throw new RuntimeException("Type IA non reconnu : " + aiType);
         };
     }
+
+    public String reviseGeneratedContent(String currentContent, String instruction, String aiType, String titre) {
+        String prompt = buildRevisionPrompt(currentContent, instruction, aiType, titre);
+
+        GeminiRequest request = new GeminiRequest(
+                List.of(
+                        new Content(
+                                List.of(new Part(prompt))
+                        )
+                )
+        );
+
+        GeminiResponse response = restClient.post()
+                .uri(apiUrl + "/" + model + ":generateContent?key=" + apiKey)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(request)
+                .retrieve()
+                .body(GeminiResponse.class);
+
+        if (response == null
+                || response.getCandidates() == null
+                || response.getCandidates().isEmpty()
+                || response.getCandidates().get(0).getContent() == null
+                || response.getCandidates().get(0).getContent().getParts() == null
+                || response.getCandidates().get(0).getContent().getParts().isEmpty()) {
+            throw new RuntimeException("Réponse Gemini vide ou invalide.");
+        }
+
+        return response.getCandidates().get(0).getContent().getParts().get(0).getText();
+    }
+
+    private String buildRevisionPrompt(String currentContent, String instruction, String aiType, String titre) {
+        return """
+            Tu es un assistant pédagogique.
+            Tu dois modifier un contenu déjà généré selon la demande de l'enseignant.
+
+            Contraintes :
+            - Respecter le type de contenu : %s
+            - Répondre directement avec la nouvelle version finale
+            - Ne pas ajouter d’introduction
+            - Ne pas écrire "Voici la nouvelle version"
+            - Garder une structure claire et propre
+            - Prendre en compte uniquement l’instruction de l’enseignant
+
+            Titre : %s
+
+            Contenu actuel :
+            %s
+
+            Instruction de l’enseignant :
+            %s
+            """.formatted(aiType, titre, currentContent, instruction);
+    }
 }

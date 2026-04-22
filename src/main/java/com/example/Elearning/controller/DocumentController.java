@@ -90,6 +90,7 @@ public class DocumentController {
         model.addAttribute("aiType", previewData.getAiType());
         model.addAttribute("moduleId", previewData.getModuleId());
         model.addAttribute("pdfUrl", "/temp-preview/" + previewFileName);
+        model.addAttribute("messages", previewData.getMessages());
 
         return "enseignant/ai-preview";
     }
@@ -192,6 +193,39 @@ public class DocumentController {
         } catch (Exception e) {
             e.printStackTrace();
             return "redirect:/enseignant/modules/" + moduleId;
+        }
+    }
+
+    @PostMapping("/enseignant/documents/preview/revise")
+    public String reviseGeneratedDocument(@RequestParam String instruction,
+                                          Authentication authentication,
+                                          HttpSession session) {
+        try {
+            CustomUserDetails userDetails =
+                    (CustomUserDetails) authentication.getPrincipal();
+
+            Utilisateur user = userDetails.getUtilisateur();
+
+            AIPreviewData previewData =
+                    (AIPreviewData) session.getAttribute("AI_PREVIEW_DATA");
+
+            if (previewData == null) {
+                return "redirect:/enseignant/matieres";
+            }
+
+            AIPreviewData updatedPreview = documentService.reviseAiPreview(
+                    previewData,
+                    instruction,
+                    user
+            );
+
+            session.setAttribute("AI_PREVIEW_DATA", updatedPreview);
+
+            return "redirect:/enseignant/documents/preview";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/enseignant/documents/preview";
         }
     }
 }

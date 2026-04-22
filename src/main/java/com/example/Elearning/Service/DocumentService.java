@@ -1,6 +1,7 @@
 package com.example.Elearning.Service;
 
 import com.example.Elearning.Dto.AIPreviewData;
+import com.example.Elearning.Dto.ChatMessageDto;
 import com.example.Elearning.Entity.ContenuGenere;
 import com.example.Elearning.Entity.Document;
 import com.example.Elearning.Entity.ModuleCours;
@@ -20,6 +21,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class DocumentService {
@@ -106,7 +109,7 @@ public class DocumentService {
 
         String previewPdfPath = pdfPreviewService.createPreviewPdf(titre, generatedText, aiType);;
 
-        return AIPreviewData.builder()
+        AIPreviewData previewData = AIPreviewData.builder()
                 .titre(titre)
                 .moduleId(moduleId)
                 .enseignantId(enseignant.getId())
@@ -117,6 +120,16 @@ public class DocumentService {
                 .generatedText(generatedText)
                 .previewPdfPath(previewPdfPath)
                 .build();
+
+        previewData.getMessages().add(
+                ChatMessageDto.builder()
+                        .sender("AI")
+                        .message("Bonjour, le document a été généré. Vous pouvez me demander des modifications.")
+                        .time(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")))
+                        .build()
+        );
+
+        return previewData;
     }
 
     public void confirmAiPreview(AIPreviewData previewData, Utilisateur enseignant) throws IOException {
@@ -195,6 +208,58 @@ public class DocumentService {
         Files.deleteIfExists(filePath);
 
         documentRepository.delete(document);
+    }
+
+    public AIPreviewData reviseAiPreview(AIPreviewData previewData,
+                                         String instruction,
+                                         Utilisateur enseignant) throws IOException {
+        if (previewData == null) {
+            throw new RuntimeException("Aucune prévisualisation IA trouvée.");
+        }
+
+        if (!previewData.getEnseignantId().equals(enseignant.getId())) {
+            throw new RuntimeException("Accès refusé.");
+        }
+
+        String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
+
+        previewData.getMessages().add(
+                ChatMessageDto.builder()
+                        .sender("USER")
+                        .message(instruction)
+                        .time(time)
+                        .build()
+        );
+
+        String revisedText = aiGenerationService.reviseGeneratedContent(
+                previewData.getGeneratedText(),
+                instruction,
+                previewData.getAiType(),
+                previewData.getTitre()
+        );
+
+        previewData.getMessages().add(
+                ChatMessageDto.builder()
+                        .sender("AI")
+                        .message("Le contenu a été mis à jour selon votre demande.")
+                        .time(time)
+                        .build()
+        );
+
+        // supprimer ancien PDF temporaire
+        Files.deleteIfExists(Paths.get(previewData.getPreviewPdfPath()));
+
+        // générer nouveau PDF temporaire
+        String newPreviewPdfPath = pdfPreviewService.createPreviewPdf(
+                previewData.getTitre(),
+                revisedText,
+                previewData.getAiType()
+        );
+
+        previewData.setGeneratedText(revisedText);
+        previewData.setPreviewPdfPath(newPreviewPdfPath);
+
+        return previewData;
     }
 }
 

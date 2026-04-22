@@ -2,6 +2,9 @@ package com.example.Elearning.Dto;
 
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,4 +22,7 @@ public class AIPreviewData {
     private String aiType;
     private String generatedText;
     private String previewPdfPath;
+
+    @Builder.Default
+    private List<ChatMessageDto> messages = new ArrayList<>();
 }
