@@ -1,0 +1,119 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/vertical}">
+
+<head>
+    <th:block layout:fragment="title-meta">
+        <th:block th:replace="~{partials/title-meta :: title-meta('Contenu Module')}" />
+    </th:block>
+</head>
+
+<body>
+<th:block layout:fragment="content">
+
+    <div class="row">
+        <div class="col-12">
+
+            <div class="d-flex align-items-sm-center flex-sm-row flex-column my-3">
+                <div class="flex-grow-1">
+                    <h4 class="fs-xl mb-1">
+                        Module : <span class="text-primary">[[${module.nom}]]</span>
+                    </h4>
+                    <p class="text-muted mb-0">[[${module.description}]]</p>
+
+                    <span class="badge bg-info-subtle text-info">
+                        [[${module.matiere.nom}]]
+                    </span>
+
+                    <span class="badge bg-success-subtle text-success">
+                        [[${module.niveau.nom}]]
+                    </span>
+
+                    <span class="badge bg-warning-subtle text-warning">
+                        [[${module.filiere.nom}]]
+                    </span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <h4 class="card-title">Documents disponibles</h4>
+            </div>
+
+            <div th:if="${!#lists.isEmpty(documents)}">
+
+                <div class="card mb-3" th:each="d : ${documents}">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="avatar-md bg-primary-subtle rounded d-flex align-items-center justify-content-center">
+                                <i class="ti ti-file-text fs-3 text-primary"></i>
+                            </div>
+
+                            <div>
+                                <h5 class="mb-0">[[${d.titre}]]</h5>
+                                <small class="text-muted">[[${d.nomFichier}]]</small>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-secondary">
+                                [[${d.modeUpload}]]
+                            </span>
+
+                            <div class="card-action">
+                                <a href="#!" class="card-action-item" data-action="card-toggle">
+                                    <i class="ti ti-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <p class="text-muted mb-2">
+                                    <strong>Date upload :</strong> [[${d.dateUpload}]]
+                                </p>
+
+                                <p class="text-muted mb-0">
+                                    <strong>Statut :</strong> [[${d.statut}]]
+                                </p>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="d-flex justify-content-md-end gap-2 mt-3 mt-md-0">
+
+                                    <a th:href="@{'/documents/view/' + ${d.id}}" target="_blank"
+                                       class="btn btn-sm btn-outline-info">
+                                        Consulter
+                                    </a>
+
+                                    <a th:href="@{'/documents/download/' + ${d.id}}"
+                                       class="btn btn-sm btn-outline-primary">
+                                        Télécharger
+                                    </a>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div th:if="${#lists.isEmpty(documents)}" class="text-center mt-4">
+                <p class="text-muted">Aucun document disponible dans ce module.</p>
+            </div>
+
+        </div>
+    </div>
+
+</th:block>
+
+<th:block layout:fragment="javascripts">
+    <script src="/js/pages/custom-table.js"></script>
+</th:block>
+
+</body>
+</html>

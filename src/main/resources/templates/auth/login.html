@@ -2,7 +2,7 @@
 
 <head>
     <th:block layout:fragment="title-meta">
-        <th:block th:replace="~{partials/title-meta :: title-meta('Sign In')}" />
+        <th:block th:replace="~{partials/title-meta :: title-meta('Se connecter')}" />
     </th:block>
 
 </head>
@@ -104,13 +104,12 @@
                             <a href="/" class="logo-light">
                                 <img src="/images/logo.png" alt="logo" height="28">
                             </a>
-                            <p class="text-muted w-lg-75 mt-3 mx-auto">Let’s get you signed in. Enter your email and
-                                password to continue.</p>
+                            <p class="text-muted w-lg-75 mt-3 mx-auto">Veuillez vous connecter. Entrez votre adresse e-mail et votre mot de passe pour continuer.</p>
                         </div>
                         <form th:action="@{/login}" method="post">
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                             <div class="mb-3">
-                                <label for="userEmail" class="form-label">Email address <span
+                                <label for="userEmail" class="form-label">Adresse email<span
                                         class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <input type="email" name="username" class="form-control" id="userEmail"
@@ -119,7 +118,7 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="userPassword" class="form-label">Password <span
+                                <label for="userPassword" class="form-label">Mot de passe<span
                                         class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <input type="password" name="password" class="form-control" id="userPassword"
@@ -131,27 +130,21 @@
                                 <div class="form-check">
                                     <input class="form-check-input form-check-input-light fs-14" type="checkbox"
                                            checked id="rememberMe">
-                                    <label class="form-check-label" for="rememberMe">Keep me signed in</label>
+                                    <label class="form-check-label" for="rememberMe">Gardez-moi connecté</label>
                                 </div>
                                 <a href="/auth/reset-pass"
-                                   class="text-decoration-underline link-offset-3 text-muted">Forgot Password?</a>
+                                   class="text-decoration-underline link-offset-3 text-muted">Mot de passe oublié ?</a>
                             </div>
 
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-primary fw-semibold py-2">Sign In</button>
+                                <button type="submit" class="btn btn-primary fw-semibold py-2">Se connecter</button>
                             </div>
                         </form>
-
-                        <p class="text-muted text-center mt-4 mb-0">
-                            New here? <a href="/auth/sign-up"
-                                         class="text-decoration-underline link-offset-3 fw-semibold">Create an account</a>
-                        </p>
                     </div>
 
                     <p class="text-center text-muted mt-4 mb-0">
                         ©
-                        <script>document.write(new Date().getFullYear())</script> UBold — by <span
-                            class="fw-semibold">Coderthemes</span>
+                        <script>document.write(new Date().getFullYear())</script> SmartGen Learning
                     </p>
                 </div>
             </div>

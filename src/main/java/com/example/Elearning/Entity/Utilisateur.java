@@ -38,6 +38,15 @@ public class Utilisateur {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
+    @ManyToOne
+    @JoinColumn(name = "niveau_id")
+    private Niveau niveau;
+
+    @ManyToOne
+    @JoinColumn(name = "filiere_id")
+    private Filiere filiere;
+
+
     @OneToMany(mappedBy = "enseignant")
     @Builder.Default
     private List<Matiere> matieres = new ArrayList<>();
@@ -45,4 +54,5 @@ public class Utilisateur {
     @OneToMany(mappedBy = "enseignant")
     @Builder.Default
     private List<Document> documents = new ArrayList<>();
+
 }
