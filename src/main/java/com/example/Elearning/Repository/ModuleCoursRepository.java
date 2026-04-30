@@ -10,8 +10,6 @@ import java.util.Optional;
 
 public interface ModuleCoursRepository extends JpaRepository<ModuleCours, Long> {
 
-    @Query("SELECT m FROM ModuleCours m WHERE m.matiere.enseignant.id = :id")
-    List<ModuleCours> findByEnseignantId(Long id);
 
     List<ModuleCours> findByMatiereId(Long matiereId);
 
@@ -38,4 +36,13 @@ AND m.filiere.id = :filiereId
 """)
     Optional<ModuleCours> findModuleForStudent(Long moduleId, Long niveauId, Long filiereId);
 
+    long countByMatiereEnseignantId(Long enseignantId);
+
+    @Query("""
+SELECT COUNT(m) FROM ModuleCours m
+WHERE m.niveau.id = :niveauId
+AND m.filiere.id = :filiereId
+""")
+    long countModulesForStudent(Long niveauId, Long filiereId);
 }
+

@@ -10,4 +10,8 @@ public interface MatiereRepository extends JpaRepository<Matiere, Long> {
 
     @Query("SELECT m FROM Matiere m WHERE m.enseignant.id = :id")
     List<Matiere> findByEnseignantId(Long id);
+
+    long countByEnseignantId(Long enseignantId);
+
+
 }
