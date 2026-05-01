@@ -44,4 +44,29 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
         AND d.modeUpload = :modeUpload
     """)
     long countDocumentsForStudentByMode(Long niveauId, Long filiereId, String modeUpload);
+
+    long countByTypeFichier(String typeFichier);
+
+    @Query("""
+SELECT COUNT(d) FROM Document d
+WHERE d.enseignant.id = :enseignantId
+AND d.modeUpload = :modeUpload
+""")
+    long countTeacherDocumentsByMode(Long enseignantId, String modeUpload);
+
+    @Query("""
+SELECT COUNT(d) FROM Document d
+WHERE d.enseignant.id = :enseignantId
+AND d.typeFichier = :typeFichier
+""")
+    long countTeacherDocumentsByType(Long enseignantId, String typeFichier);
+
+    @Query("""
+SELECT COUNT(d) FROM Document d
+WHERE d.module.niveau.id = :niveauId
+AND d.module.filiere.id = :filiereId
+AND d.typeFichier = :typeFichier
+""")
+    long countDocumentsForStudentByType(Long niveauId, Long filiereId, String typeFichier);
+
 }

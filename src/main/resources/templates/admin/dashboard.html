@@ -146,6 +146,60 @@
         </div>
     </div>
 
+    <div class="row mt-3">
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Répartition des utilisateurs</h4>
+                </div>
+                <div class="card-body">
+                    <canvas id="adminRoleChart" style="height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Documents Standard / IA</h4>
+                </div>
+                <div class="card-body">
+                    <canvas id="adminDocumentModeChart" style="height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </th:block>
+<script src="/plugins/chartjs/chart.umd.js"></script>
+
+<script th:inline="javascript">
+    const adminRoleLabels = /*[[${adminRoleLabels}]]*/ [];
+    const adminRoleData = /*[[${adminRoleData}]]*/ [];
+
+    new Chart(document.getElementById('adminRoleChart'), {
+        type: 'doughnut',
+        data: {
+            labels: adminRoleLabels,
+            datasets: [{
+                data: adminRoleData
+            }]
+        }
+    });
+
+    const adminDocumentModeLabels = /*[[${adminDocumentModeLabels}]]*/ [];
+    const adminDocumentModeData = /*[[${adminDocumentModeData}]]*/ [];
+
+    new Chart(document.getElementById('adminDocumentModeChart'), {
+        type: 'bar',
+        data: {
+            labels: adminDocumentModeLabels,
+            datasets: [{
+                label: 'Documents',
+                data: adminDocumentModeData
+            }]
+        }
+    });
+</script>
 </body>
 </html>

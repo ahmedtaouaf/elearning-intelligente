@@ -111,6 +111,60 @@
         </div>
     </div>
 
+    <div class="row mt-3">
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Documents par mode</h4>
+                </div>
+                <div class="card-body">
+                    <canvas id="studentModeChart" style="height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Documents par type</h4>
+                </div>
+                <div class="card-body">
+                    <canvas id="studentTypeChart" style="height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </th:block>
+<script src="/plugins/chartjs/chart.umd.js"></script>
+
+<script th:inline="javascript">
+    const studentModeLabels = /*[[${studentModeLabels}]]*/ [];
+    const studentModeData = /*[[${studentModeData}]]*/ [];
+
+    new Chart(document.getElementById('studentModeChart'), {
+        type: 'doughnut',
+        data: {
+            labels: studentModeLabels,
+            datasets: [{
+                data: studentModeData
+            }]
+        }
+    });
+
+    const studentTypeLabels = /*[[${studentTypeLabels}]]*/ [];
+    const studentTypeData = /*[[${studentTypeData}]]*/ [];
+
+    new Chart(document.getElementById('studentTypeChart'), {
+        type: 'bar',
+        data: {
+            labels: studentTypeLabels,
+            datasets: [{
+                label: 'Documents',
+                data: studentTypeData
+            }]
+        }
+    });
+</script>
 </body>
 </html>

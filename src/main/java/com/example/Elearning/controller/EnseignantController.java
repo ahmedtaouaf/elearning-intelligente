@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.List;
+
 @Controller
 public class EnseignantController {
 
@@ -44,6 +46,20 @@ public class EnseignantController {
         model.addAttribute("totalQcm", documentRepository.countByEnseignantIdAndTypeFichier(id, "QCM"));
         model.addAttribute("totalResume", documentRepository.countByEnseignantIdAndTypeFichier(id, "RESUME"));
         model.addAttribute("recentDocuments", documentRepository.findTop5ByEnseignantIdOrderByDateUploadDesc(id));
+
+        model.addAttribute("teacherModeLabels", List.of("Standard", "IA"));
+        model.addAttribute("teacherModeData", List.of(
+                documentRepository.countTeacherDocumentsByMode(id, "MANUEL"),
+                documentRepository.countTeacherDocumentsByMode(id, "AI")
+        ));
+
+        model.addAttribute("teacherTypeLabels", List.of("PDF", "QCM", "Résumé", "Examen"));
+        model.addAttribute("teacherTypeData", List.of(
+                documentRepository.countTeacherDocumentsByType(id, "PDF"),
+                documentRepository.countTeacherDocumentsByType(id, "QCM"),
+                documentRepository.countTeacherDocumentsByType(id, "RESUME"),
+                documentRepository.countTeacherDocumentsByType(id, "EXAMEN")
+        ));
 
         return "enseignant/dashboard";
     }

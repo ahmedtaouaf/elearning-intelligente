@@ -56,6 +56,20 @@ public class EtudiantController {
                         .limit(5)
                         .toList());
 
+        model.addAttribute("studentModeLabels", List.of("Standard", "IA"));
+        model.addAttribute("studentModeData", List.of(
+                documentRepository.countDocumentsForStudentByMode(niveauId, filiereId, "MANUEL"),
+                documentRepository.countDocumentsForStudentByMode(niveauId, filiereId, "AI")
+        ));
+
+        model.addAttribute("studentTypeLabels", List.of("PDF", "QCM", "Résumé", "Examen"));
+        model.addAttribute("studentTypeData", List.of(
+                documentRepository.countDocumentsForStudentByType(niveauId, filiereId, "PDF"),
+                documentRepository.countDocumentsForStudentByType(niveauId, filiereId, "QCM"),
+                documentRepository.countDocumentsForStudentByType(niveauId, filiereId, "RESUME"),
+                documentRepository.countDocumentsForStudentByType(niveauId, filiereId, "EXAMEN")
+        ));
+
         return "etudiant/dashboard";
     }
 

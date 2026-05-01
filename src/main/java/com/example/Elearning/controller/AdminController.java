@@ -5,6 +5,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.List;
+
 @Controller
 public class AdminController {
 
@@ -37,6 +39,19 @@ public class AdminController {
         model.addAttribute("totalAiDocuments", documentRepository.countByModeUpload("AI"));
         model.addAttribute("totalGeneratedContents", contenuGenereRepository.count());
         model.addAttribute("recentDocuments", documentRepository.findTop5ByOrderByDateUploadDesc());
+
+        model.addAttribute("adminRoleLabels", List.of("Admin", "Enseignant", "Étudiant"));
+        model.addAttribute("adminRoleData", List.of(
+                utilisateurRepository.countByRoleNom("ADMIN"),
+                utilisateurRepository.countByRoleNom("ENSEIGNANT"),
+                utilisateurRepository.countByRoleNom("ETUDIANT")
+        ));
+
+        model.addAttribute("adminDocumentModeLabels", List.of("Standard", "IA"));
+        model.addAttribute("adminDocumentModeData", List.of(
+                documentRepository.countByModeUpload("MANUEL"),
+                documentRepository.countByModeUpload("AI")
+        ));
         return "admin/dashboard";
     }
 
