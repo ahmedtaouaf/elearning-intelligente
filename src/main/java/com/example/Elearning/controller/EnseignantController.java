@@ -47,18 +47,24 @@ public class EnseignantController {
         model.addAttribute("totalResume", documentRepository.countByEnseignantIdAndTypeFichier(id, "RESUME"));
         model.addAttribute("recentDocuments", documentRepository.findTop5ByEnseignantIdOrderByDateUploadDesc(id));
 
-        model.addAttribute("teacherModeLabels", List.of("Standard", "IA"));
+        model.addAttribute("teacherModeLabels", List.of("Standard", "Résumé", "QCM", "Examen"));
+
         model.addAttribute("teacherModeData", List.of(
-                documentRepository.countTeacherDocumentsByMode(id, "MANUEL"),
-                documentRepository.countTeacherDocumentsByMode(id, "AI")
+                documentRepository.countTeacherDocumentsByMode(id, "STANDARD")
+                        + documentRepository.countTeacherDocumentsByMode(id, "MANUEL"),
+                documentRepository.countTeacherDocumentsByMode(id, "RESUME"),
+                documentRepository.countTeacherDocumentsByMode(id, "QCM"),
+                documentRepository.countTeacherDocumentsByMode(id, "EXAMEN")
         ));
 
-        model.addAttribute("teacherTypeLabels", List.of("PDF", "QCM", "Résumé", "Examen"));
+        model.addAttribute("teacherTypeLabels", List.of("PDF Standard", "Résumé IA", "QCM IA", "Examen IA"));
+
         model.addAttribute("teacherTypeData", List.of(
-                documentRepository.countTeacherDocumentsByType(id, "PDF"),
-                documentRepository.countTeacherDocumentsByType(id, "QCM"),
-                documentRepository.countTeacherDocumentsByType(id, "RESUME"),
-                documentRepository.countTeacherDocumentsByType(id, "EXAMEN")
+                documentRepository.countTeacherDocumentsByMode(id, "STANDARD")
+                        + documentRepository.countTeacherDocumentsByMode(id, "MANUEL"),
+                documentRepository.countTeacherDocumentsByMode(id, "RESUME"),
+                documentRepository.countTeacherDocumentsByMode(id, "QCM"),
+                documentRepository.countTeacherDocumentsByMode(id, "EXAMEN")
         ));
 
         return "enseignant/dashboard";

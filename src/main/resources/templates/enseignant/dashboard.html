@@ -1,181 +1,252 @@
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/vertical}">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/vertical}">
 
 <head>
     <th:block layout:fragment="title-meta">
-        <th:block th:replace="~{partials/title-meta :: title-meta('Dashboard Enseignant')}" />
+        <th:block th:replace="~{partials/title-meta :: title-meta('Tableau de Bord')}" />
     </th:block>
+
 </head>
 
 <body>
 <th:block layout:fragment="content">
 
-    <div th:replace="~{partials/page-title :: page-title('Dashboard Enseignant', null)}"></div>
+    <div th:replace="~{partials/page-title :: page-title(
+            'Dashboard',
+            null
+                )}">
+    </div>
 
     <div class="row row-cols-xxl-4 row-cols-md-2 row-cols-1">
-
+        <!-- Total Sales Widget -->
         <div class="col">
             <div class="card">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <span class="avatar-title bg-primary-subtle text-primary rounded-circle fs-24 p-3">
-                        <i class="ti ti-book"></i>
-                    </span>
-                    <div class="text-end">
-                        <h3>[[${totalMatieres}]]</h3>
-                        <p class="text-muted mb-0">Mes matières</p>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="avatar fs-60 avatar-img-size flex-shrink-0">
+                                <span class="avatar-title bg-primary-subtle text-primary rounded-circle fs-24">
+                                    <i class="ti ti-book"></i>
+                                </span>
+                        </div>
+                        <div class="text-end">
+                            <h3 class="mb-2 fw-normal">[[${totalMatieres}]]</h3>
+                            <p class="mb-0 text-muted"><span>Mes matières</span></p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </div><!-- end col -->
 
+        <!-- Orders Placed Widget -->
         <div class="col">
             <div class="card">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <span class="avatar-title bg-success-subtle text-success rounded-circle fs-24 p-3">
-                        <i class="ti ti-folders"></i>
-                    </span>
-                    <div class="text-end">
-                        <h3>[[${totalModules}]]</h3>
-                        <p class="text-muted mb-0">Mes modules</p>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="avatar fs-60 avatar-img-size flex-shrink-0">
+                                <span class="avatar-title bg-success-subtle text-success rounded-circle fs-24">
+                                    <i class="ti ti-file-text"></i>
+                                </span>
+                        </div>
+                        <div class="text-end">
+                            <h3 class="mb-2 fw-normal">[[${totalModules}]]</h3>
+                            <p class="mb-0 text-muted"><span>Mes modules</span></p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </div><!-- end col -->
 
+        <!-- Active Customers Widget -->
         <div class="col">
             <div class="card">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <span class="avatar-title bg-info-subtle text-info rounded-circle fs-24 p-3">
-                        <i class="ti ti-file-text"></i>
-                    </span>
-                    <div class="text-end">
-                        <h3>[[${totalDocuments}]]</h3>
-                        <p class="text-muted mb-0">Documents</p>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="avatar fs-60 avatar-img-size flex-shrink-0">
+                                <span class="avatar-title bg-info-subtle text-info rounded-circle fs-24">
+                                    <i class="ti ti-sparkles"></i>
+                                </span>
+                        </div>
+                        <div class="text-end">
+                            <h3 class="mb-2 fw-normal">[[${totalDocuments}]]</h3>
+                            <p class="mb-0 text-muted"><span>Documents</span></p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </div><!-- end col -->
 
+        <!-- Refund Requests Widget -->
         <div class="col">
             <div class="card">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <span class="avatar-title bg-warning-subtle text-warning rounded-circle fs-24 p-3">
-                        <i class="ti ti-sparkles"></i>
-                    </span>
-                    <div class="text-end">
-                        <h3>[[${totalAiDocuments}]]</h3>
-                        <p class="text-muted mb-0">Générations IA</p>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="avatar fs-60 avatar-img-size flex-shrink-0">
+                                <span class="avatar-title bg-warning-subtle text-warning rounded-circle fs-24">
+                                    <i class="ti ti-rotate-clockwise-2"></i>
+                                </span>
+                        </div>
+                        <div class="text-end">
+                            <h3 class="mb-2 fw-normal">[[${totalAiDocuments}]]</h3>
+                            <p class="mb-0 text-muted"><span>Générations <IA></IA></span></p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </div><!-- end col -->
+    </div><!-- end row -->
 
-    </div>
-
-    <div class="row row-cols-md-2 row-cols-1">
-        <div class="col">
+    <div class="row">
+        <div class="col-12">
             <div class="card">
-                <div class="card-body text-center">
-                    <h3>[[${totalQcm}]]</h3>
-                    <p class="text-muted mb-0">QCM générés</p>
+                <div class="card-body p-0">
+                    <div class="card-header justify-content-between align-items-center border-dashed">
+                        <h4 class="card-title mb-0">Derniers documents déposés</h4>
+                        <div class="d-flex gap-2">
+                            <a href="javascript:void(0);" class="btn btn-sm btn-primary">
+                                <i class="ti ti-file-export me-1"></i> Mes matières
+                            </a>
+                        </div>
+                    </div>
+                    <table class="table table-hover table-centered mb-0">
+                        <thead>
+                        <tr>
+                            <th>Document</th>
+                            <th>Module</th>
+                            <th>Type</th>
+                            <th>Mode</th>
+                            <th>Date</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="d : ${recentDocuments}">
+                            <td>[[${d.titre}]]</td>
+                            <td>[[${d.module.nom}]]</td>
+                            <td><span class="badge bg-info-subtle text-info">[[${d.typeFichier}]]</span></td>
+                            <td><span class="badge bg-warning-subtle text-warning">[[${d.modeUpload}]]</span></td>
+                            <td>[[${d.dateUpload}]]</td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-        </div>
+            </div> <!-- end card-->
+        </div> <!-- end col-->
+    </div> <!-- end row-->
 
-        <div class="col">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h3>[[${totalResume}]]</h3>
-                    <p class="text-muted mb-0">Résumés générés</p>
+    <div class="row">
+        <div class="col-xxl-6">
+            <div data-table data-table-rows-per-page="7" class="card">
+                <div class="card-header justify-content-between align-items-center border-dashed">
+                    <h4 class="card-title mb-0">Mes documents par mode</h4>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    <div class="card mt-3">
-        <div class="card-header justify-content-between">
-            <h4 class="card-title">Derniers documents déposés</h4>
-            <a href="/enseignant/matieres" class="btn btn-sm btn-primary">Mes matières</a>
-        </div>
+                <div class="card-body">
+                    <div style="height: 350px; position: relative;">
+                        <canvas id="teacherModeChart"></canvas>
+                    </div>
+                </div>
 
-        <div class="card-body p-0">
-            <table class="table table-hover table-centered mb-0">
-                <thead>
-                <tr>
-                    <th>Document</th>
-                    <th>Module</th>
-                    <th>Type</th>
-                    <th>Mode</th>
-                    <th>Date</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="d : ${recentDocuments}">
-                    <td>[[${d.titre}]]</td>
-                    <td>[[${d.module.nom}]]</td>
-                    <td><span class="badge bg-info-subtle text-info">[[${d.typeFichier}]]</span></td>
-                    <td><span class="badge bg-warning-subtle text-warning">[[${d.modeUpload}]]</span></td>
-                    <td>[[${d.dateUpload}]]</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+                <div class="card-footer border-0">
+                    <div class="align-items-center justify-content-between row text-center text-sm-start">
+                        <div class="col-sm">
+                            <div data-table-pagination-info="products"></div>
+                        </div>
+                        <div class="col-sm-auto mt-3 mt-sm-0">
+                            <div data-table-pagination></div>
+                        </div> <!-- end col-->
+                    </div> <!-- end row-->
+                </div> <!-- end card-footer-->
+            </div> <!-- end card-->
+        </div> <!-- end col-->
 
-    <div class="row mt-3">
-        <div class="col-xl-6">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">Mes documents par mode</h4>
+        <div class="col-xxl-6">
+            <div data-table data-table-rows-per-page="7" class="card">
+                <div class="card-header justify-content-between align-items-center border-dashed">
+                    <h4 class="card-title mb-0">Mes documents par type</h4>
                 </div>
                 <div class="card-body">
-                    <canvas id="teacherModeChart" style="height: 300px;"></canvas>
+                    <div style="height: 350px; position: relative;">
+                        <canvas id="teacherTypeChart"></canvas>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <div class="col-xl-6">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">Mes documents par type</h4>
-                </div>
-                <div class="card-body">
-                    <canvas id="teacherTypeChart" style="height: 300px;"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
+                <div class="card-footer border-0">
+                    <div class="align-items-center justify-content-between row text-center text-sm-start">
+                        <div class="col-sm">
+                            <div data-table-pagination-info="orders"></div>
+                        </div>
+                        <div class="col-sm-auto mt-3 mt-sm-0">
+                            <div data-table-pagination></div>
+                        </div> <!-- end col-->
+                    </div> <!-- end row-->
+                </div> <!-- end card-footer-->
+            </div> <!-- end card-->
+        </div> <!-- end col-->
+    </div> <!-- end row-->
 
 </th:block>
-<script src="/plugins/chartjs/chart.umd.js"></script>
 
-<script th:inline="javascript">
-    const teacherModeLabels = /*[[${teacherModeLabels}]]*/ [];
-    const teacherModeData = /*[[${teacherModeData}]]*/ [];
+<th:block layout:fragment="javascripts">
+    <!-- E Charts js -->
+    <script src="/plugins/chartjs/chart.umd.js"></script>
 
-    new Chart(document.getElementById('teacherModeChart'), {
-        type: 'doughnut',
-        data: {
-            labels: teacherModeLabels,
-            datasets: [{
-                data: teacherModeData
-            }]
-        }
-    });
+    <!-- Custom table -->
+    <script src="/js/pages/custom-table.js"></script>
 
-    const teacherTypeLabels = /*[[${teacherTypeLabels}]]*/ [];
-    const teacherTypeData = /*[[${teacherTypeData}]]*/ [];
+    <!-- Dashboard Page js -->
+    <script src="/js/pages/dashboard.js"></script>
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function () {
 
-    new Chart(document.getElementById('teacherTypeChart'), {
-        type: 'bar',
-        data: {
-            labels: teacherTypeLabels,
-            datasets: [{
-                label: 'Documents',
-                data: teacherTypeData
-            }]
-        }
-    });
-</script>
+            const chartOptions = {
+                maintainAspectRatio: false, // This is the crucial part
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                }
+            };
+
+            const teacherModeLabels = /*[[${teacherModeLabels}]]*/ [];
+            const teacherModeData = /*[[${teacherModeData}]]*/ [];
+
+            const teacherModeChart = document.getElementById('teacherModeChart');
+            if (teacherModeChart) {
+                new Chart(teacherModeChart, {
+                    type: 'doughnut',
+                    data: {
+                        labels: teacherModeLabels,
+                        datasets: [{
+                            label: 'Documents',
+                            data: teacherModeData,
+                            backgroundColor: ['#3bafda', '#f672a7', '#ff9800', '#f1b44c'] // Optional: add colors
+                        }]
+                    },
+                    options: chartOptions // Apply the options here
+                });
+            }
+
+            const teacherTypeLabels = /*[[${teacherTypeLabels}]]*/ [];
+            const teacherTypeData = /*[[${teacherTypeData}]]*/ [];
+
+            const teacherTypeChart = document.getElementById('teacherTypeChart');
+            if (teacherTypeChart) {
+                new Chart(teacherTypeChart, {
+                    type: 'bar',
+                    data: {
+                        labels: teacherTypeLabels,
+                        datasets: [{
+                            label: 'Documents',
+                            data: teacherTypeData,
+                            backgroundColor: '#3bafda'
+                        }]
+                    },
+                    options: chartOptions // Apply the options here
+                });
+            }
+        });
+    </script>
+</th:block>
+
 </body>
+
 </html>
