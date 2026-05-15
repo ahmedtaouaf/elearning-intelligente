@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -57,15 +58,19 @@ public class EnseignantController {
                 documentRepository.countTeacherDocumentsByMode(id, "EXAMEN")
         ));
 
-        model.addAttribute("teacherTypeLabels", List.of("PDF Standard", "Résumé IA", "QCM IA", "Examen IA"));
+        List<Object[]> moduleStats =
+                documentRepository.countDocumentsByModuleForTeacher(id);
 
-        model.addAttribute("teacherTypeData", List.of(
-                documentRepository.countTeacherDocumentsByMode(id, "STANDARD")
-                        + documentRepository.countTeacherDocumentsByMode(id, "MANUEL"),
-                documentRepository.countTeacherDocumentsByMode(id, "RESUME"),
-                documentRepository.countTeacherDocumentsByMode(id, "QCM"),
-                documentRepository.countTeacherDocumentsByMode(id, "EXAMEN")
-        ));
+        List<String> moduleLabels = new ArrayList<>();
+        List<Long> moduleData = new ArrayList<>();
+
+        for (Object[] row : moduleStats) {
+            moduleLabels.add((String) row[0]);
+            moduleData.add((Long) row[1]);
+        }
+
+        model.addAttribute("teacherModuleLabels", moduleLabels);
+        model.addAttribute("teacherModuleData", moduleData);
 
         return "enseignant/dashboard";
     }

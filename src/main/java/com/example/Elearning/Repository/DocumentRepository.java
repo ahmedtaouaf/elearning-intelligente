@@ -69,4 +69,13 @@ AND d.typeFichier = :typeFichier
 """)
     long countDocumentsForStudentByType(Long niveauId, Long filiereId, String typeFichier);
 
+    @Query("""
+SELECT d.module.nom, COUNT(d)
+FROM Document d
+WHERE d.enseignant.id = :enseignantId
+GROUP BY d.module.nom
+ORDER BY COUNT(d) DESC
+""")
+    List<Object[]> countDocumentsByModuleForTeacher(Long enseignantId);
+
 }

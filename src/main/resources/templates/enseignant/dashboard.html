@@ -95,6 +95,57 @@
     </div><!-- end row -->
 
     <div class="row">
+        <div class="col-xxl-6">
+            <div data-table data-table-rows-per-page="7" class="card">
+                <div class="card-header justify-content-between align-items-center border-dashed">
+                    <h4 class="card-title mb-0">Mes documents par mode</h4>
+                </div>
+
+                <div class="card-body">
+                    <div style="height: 350px; position: relative;">
+                        <canvas id="teacherModeChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card-footer border-0">
+                    <div class="align-items-center justify-content-between row text-center text-sm-start">
+                        <div class="col-sm">
+                            <div data-table-pagination-info="products"></div>
+                        </div>
+                        <div class="col-sm-auto mt-3 mt-sm-0">
+                            <div data-table-pagination></div>
+                        </div> <!-- end col-->
+                    </div> <!-- end row-->
+                </div> <!-- end card-footer-->
+            </div> <!-- end card-->
+        </div> <!-- end col-->
+
+        <div class="col-xxl-6">
+            <div data-table data-table-rows-per-page="7" class="card">
+                <div class="card-header justify-content-between align-items-center border-dashed">
+                    <h4 class="card-title mb-0">Documents par module</h4>
+                </div>
+                <div class="card-body">
+                    <div style="height: 350px; position: relative;">
+                        <canvas id="teacherModuleChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card-footer border-0">
+                    <div class="align-items-center justify-content-between row text-center text-sm-start">
+                        <div class="col-sm">
+                            <div data-table-pagination-info="orders"></div>
+                        </div>
+                        <div class="col-sm-auto mt-3 mt-sm-0">
+                            <div data-table-pagination></div>
+                        </div> <!-- end col-->
+                    </div> <!-- end row-->
+                </div> <!-- end card-footer-->
+            </div> <!-- end card-->
+        </div> <!-- end col-->
+    </div> <!-- end row-->
+
+    <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body p-0">
@@ -129,58 +180,7 @@
                 </div>
             </div> <!-- end card-->
         </div> <!-- end col-->
-    </div> <!-- end row-->
-
-    <div class="row">
-        <div class="col-xxl-6">
-            <div data-table data-table-rows-per-page="7" class="card">
-                <div class="card-header justify-content-between align-items-center border-dashed">
-                    <h4 class="card-title mb-0">Mes documents par mode</h4>
-                </div>
-
-                <div class="card-body">
-                    <div style="height: 350px; position: relative;">
-                        <canvas id="teacherModeChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="card-footer border-0">
-                    <div class="align-items-center justify-content-between row text-center text-sm-start">
-                        <div class="col-sm">
-                            <div data-table-pagination-info="products"></div>
-                        </div>
-                        <div class="col-sm-auto mt-3 mt-sm-0">
-                            <div data-table-pagination></div>
-                        </div> <!-- end col-->
-                    </div> <!-- end row-->
-                </div> <!-- end card-footer-->
-            </div> <!-- end card-->
-        </div> <!-- end col-->
-
-        <div class="col-xxl-6">
-            <div data-table data-table-rows-per-page="7" class="card">
-                <div class="card-header justify-content-between align-items-center border-dashed">
-                    <h4 class="card-title mb-0">Mes documents par type</h4>
-                </div>
-                <div class="card-body">
-                    <div style="height: 350px; position: relative;">
-                        <canvas id="teacherTypeChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="card-footer border-0">
-                    <div class="align-items-center justify-content-between row text-center text-sm-start">
-                        <div class="col-sm">
-                            <div data-table-pagination-info="orders"></div>
-                        </div>
-                        <div class="col-sm-auto mt-3 mt-sm-0">
-                            <div data-table-pagination></div>
-                        </div> <!-- end col-->
-                    </div> <!-- end row-->
-                </div> <!-- end card-footer-->
-            </div> <!-- end card-->
-        </div> <!-- end col-->
-    </div> <!-- end row-->
+    </div>
 
 </th:block>
 
@@ -225,24 +225,59 @@
                 });
             }
 
-            const teacherTypeLabels = /*[[${teacherTypeLabels}]]*/ [];
-            const teacherTypeData = /*[[${teacherTypeData}]]*/ [];
+            const teacherModuleLabels = /*[[${teacherModuleLabels}]]*/ [];
+            const teacherModuleData = /*[[${teacherModuleData}]]*/ [];
 
-            const teacherTypeChart = document.getElementById('teacherTypeChart');
-            if (teacherTypeChart) {
-                new Chart(teacherTypeChart, {
-                    type: 'bar',
-                    data: {
-                        labels: teacherTypeLabels,
-                        datasets: [{
-                            label: 'Documents',
-                            data: teacherTypeData,
-                            backgroundColor: '#3bafda'
-                        }]
+            new Chart(document.getElementById('teacherModuleChart'), {
+                type: 'bar',
+                data: {
+                    labels: teacherModuleLabels,
+                    datasets: [{
+                        label: 'Documents',
+                        data: teacherModuleData
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    let label = this.getLabelForValue(value);
+                                    return label.length > 35 ? label.substring(0, 35) + '...' : label;
+                                }
+                            }
+                        }
                     },
-                    options: chartOptions // Apply the options here
-                });
-            }
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                title: function(context) {
+                                    return context[0].label;
+                                }
+                            }
+                        },
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
         });
     </script>
 </th:block>
