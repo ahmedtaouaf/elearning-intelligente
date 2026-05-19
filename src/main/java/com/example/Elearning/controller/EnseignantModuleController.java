@@ -78,15 +78,4 @@ public class EnseignantModuleController {
 
         return "enseignant/module-details";
     }
-
-    /*@GetMapping("/documents/view/{id}")
-    public String viewDocument(@PathVariable Long id, Model model) {
-        Document document = documentRepository.findById(id).orElseThrow();
-
-        model.addAttribute("pdfUrl", "/uploads/" + document.getNomFichier());
-        model.addAttribute("titre", document.getTitre());
-
-        return "enseignant/pdf-viewer";
-    }*/
-
 }

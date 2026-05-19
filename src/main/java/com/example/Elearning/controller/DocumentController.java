@@ -5,6 +5,7 @@ import com.example.Elearning.Dto.AIPreviewData;
 import com.example.Elearning.Entity.Document;
 import com.example.Elearning.Entity.Utilisateur;
 import com.example.Elearning.Repository.DocumentRepository;
+import com.example.Elearning.Service.DocumentIndexingService;
 import com.example.Elearning.Service.DocumentService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.core.io.Resource;
@@ -19,17 +20,20 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @Controller
 public class DocumentController {
 
     private final DocumentService documentService;
     private final DocumentRepository documentRepository;
+    private final DocumentIndexingService documentIndexingService;
 
 
-    public DocumentController(DocumentService documentService, DocumentRepository documentRepository) {
+    public DocumentController(DocumentService documentService, DocumentRepository documentRepository, DocumentIndexingService documentIndexingService) {
         this.documentService = documentService;
         this.documentRepository = documentRepository;
+        this.documentIndexingService = documentIndexingService;
     }
 
     @PostMapping("/enseignant/documents/upload")
@@ -227,5 +231,17 @@ public class DocumentController {
             e.printStackTrace();
             return "redirect:/enseignant/documents/preview";
         }
+    }
+
+    @GetMapping("/admin/documents/reindex")
+    public String reindexDocuments() {
+
+        List<Document> documents = documentRepository.findAll();
+
+        for (Document document : documents) {
+            documentIndexingService.indexDocument(document);
+        }
+
+        return "redirect:/admin/dashboard";
     }
 }

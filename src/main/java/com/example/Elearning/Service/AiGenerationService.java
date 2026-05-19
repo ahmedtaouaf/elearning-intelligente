@@ -213,4 +213,48 @@ public class AiGenerationService {
             %s
             """.formatted(aiType, titre, currentContent, instruction);
     }
+
+    public String answerFromContext(String question, String context) {
+
+        String prompt = """
+            Tu es un assistant pédagogique.
+            Réponds à la question de l'étudiant uniquement à partir du contexte fourni.
+
+            Règles :
+            - Réponse courte et directe
+            - Ne donne pas tout le cours
+            - Ne recopie pas tous les passages
+            - Réponds seulement à la question
+            - Si le contexte ne contient pas la réponse, dis : "Je n'ai pas trouvé cette information dans les documents du module."
+
+            Question :
+            %s
+
+            Contexte :
+            %s
+            """.formatted(question, context);
+
+        GeminiRequest request = new GeminiRequest(
+                List.of(
+                        new Content(
+                                List.of(new Part(prompt))
+                        )
+                )
+        );
+
+        GeminiResponse response = restClient.post()
+                .uri(apiUrl + "/" + model + ":generateContent?key=" + apiKey)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(request)
+                .retrieve()
+                .body(GeminiResponse.class);
+
+        return response.getCandidates()
+                .get(0)
+                .getContent()
+                .getParts()
+                .get(0)
+                .getText();
+    }
+
 }

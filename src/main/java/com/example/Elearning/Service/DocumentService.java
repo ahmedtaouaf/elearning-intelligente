@@ -40,6 +40,7 @@ public class DocumentService {
     private final PdfTextService pdfTextService;
     private final AiGenerationService aiGenerationService;
     private final PdfPreviewService pdfPreviewService;
+    private final DocumentIndexingService documentIndexingService;
 
     public DocumentService(DocumentRepository documentRepository,
                            ModuleCoursRepository moduleCoursRepository,
@@ -47,7 +48,7 @@ public class DocumentService {
                            ContenuGenereRepository contenuGenereRepository,
                            PdfTextService pdfTextService,
                            AiGenerationService aiGenerationService,
-                           PdfPreviewService pdfPreviewService) {
+                           PdfPreviewService pdfPreviewService, DocumentIndexingService documentIndexingService) {
         this.documentRepository = documentRepository;
         this.moduleCoursRepository = moduleCoursRepository;
         this.utilisateurRepository = utilisateurRepository;
@@ -55,6 +56,7 @@ public class DocumentService {
         this.pdfTextService = pdfTextService;
         this.aiGenerationService = aiGenerationService;
         this.pdfPreviewService = pdfPreviewService;
+        this.documentIndexingService = documentIndexingService;
     }
 
     public void uploadStandardDocument(String titre,
@@ -86,7 +88,8 @@ public class DocumentService {
                 .module(module)
                 .build();
 
-        documentRepository.save(document);
+        Document savedDocument = documentRepository.save(document);
+        documentIndexingService.indexDocument(savedDocument);
     }
 
     public AIPreviewData prepareAiPreview(String titre,
@@ -180,7 +183,8 @@ public class DocumentService {
                 .document(savedDocument)
                 .build();
 
-        contenuGenereRepository.save(contenuGenere);
+
+        documentIndexingService.indexDocument(savedDocument);
 
         // on supprime le PDF source temporaire, car tu ne veux pas le conserver
         Files.deleteIfExists(Paths.get(previewData.getSourceStoredPath()));

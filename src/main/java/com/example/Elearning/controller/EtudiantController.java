@@ -1,16 +1,20 @@
 package com.example.Elearning.controller;
 
 import com.example.Elearning.Config.CustomUserDetails;
+import com.example.Elearning.Dto.SemanticSearchResult;
 import com.example.Elearning.Entity.Document;
 import com.example.Elearning.Entity.Matiere;
 import com.example.Elearning.Entity.ModuleCours;
 import com.example.Elearning.Entity.Utilisateur;
 import com.example.Elearning.Repository.*;
+import com.example.Elearning.Service.SemanticSearchService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -20,12 +24,14 @@ public class EtudiantController {
     private final UtilisateurRepository utilisateurRepository;
     private final ModuleCoursRepository moduleCoursRepository;
     private final DocumentRepository documentRepository;
+    private final SemanticSearchService semanticSearchService;
 
     public EtudiantController(UtilisateurRepository utilisateurRepository, ModuleCoursRepository moduleCoursRepository,
-                              DocumentRepository documentRepository) {
+                              DocumentRepository documentRepository, SemanticSearchService semanticSearchService) {
         this.utilisateurRepository = utilisateurRepository;
         this.moduleCoursRepository = moduleCoursRepository;
         this.documentRepository = documentRepository;
+        this.semanticSearchService = semanticSearchService;
     }
     @GetMapping("/etudiant/dashboard")
     public String etudiantDashboard(Authentication authentication, Model model) {
@@ -137,5 +143,55 @@ public class EtudiantController {
         model.addAttribute("documents", documents);
 
         return "etudiant/contenu";
+    }
+
+    @PostMapping("/etudiant/modules/{id}/recherche")
+    public String rechercherDansModule(@PathVariable Long id,
+                                       @RequestParam String question,
+                                       Authentication authentication,
+                                       Model model) {
+
+        CustomUserDetails userDetails =
+                (CustomUserDetails) authentication.getPrincipal();
+
+        Utilisateur etudiant = utilisateurRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow();
+
+        ModuleCours module = moduleCoursRepository.findModuleForStudent(
+                id,
+                etudiant.getNiveau().getId(),
+                etudiant.getFiliere().getId()
+        ).orElseThrow();
+
+        SemanticSearchResult result =
+                semanticSearchService.searchInModule(id, question);
+
+        model.addAttribute("module", module);
+        model.addAttribute("question", question);
+        model.addAttribute("passages", result.getPassages());
+        model.addAttribute("reponse", result.getReponse());
+
+        return "etudiant/recherche-module";
+    }
+    @GetMapping("/etudiant/modules/{id}/recherche")
+    public String pageRechercheModule(@PathVariable Long id,
+                                      Authentication authentication,
+                                      Model model) {
+
+        CustomUserDetails userDetails =
+                (CustomUserDetails) authentication.getPrincipal();
+
+        Utilisateur etudiant = utilisateurRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow();
+
+        ModuleCours module = moduleCoursRepository.findModuleForStudent(
+                id,
+                etudiant.getNiveau().getId(),
+                etudiant.getFiliere().getId()
+        ).orElseThrow();
+
+        model.addAttribute("module", module);
+
+        return "etudiant/recherche-module";
     }
 }

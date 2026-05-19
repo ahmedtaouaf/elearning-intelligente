@@ -38,9 +38,14 @@
                                     [[${m.enseignant.nom}]] [[${m.enseignant.prenom}]]
                                 </span>
 
-                                <a th:href="@{'/etudiant/matieres/' + ${m.id} + '/modules'}"
+                                <a th:href="@{'/etudiant/modules/' + ${m.id} + '/contenu'}"
                                    class="btn btn-primary w-100 mt-2">
-                                    Voir modules
+                                    Voir contenu
+                                </a>
+
+                                <a th:href="@{'/etudiant/modules/' + ${m.id} + '/recherche'}"
+                                   class="btn btn-outline-info w-100 mt-2">
+                                    Recherche IA
                                 </a>
                             </div>
 

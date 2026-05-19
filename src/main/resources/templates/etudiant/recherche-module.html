@@ -1,0 +1,89 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/vertical}">
+
+<head>
+    <th:block layout:fragment="title-meta">
+        <th:block th:replace="~{partials/title-meta :: title-meta('Recherche IA')}" />
+    </th:block>
+</head>
+
+<body>
+<th:block layout:fragment="content">
+
+    <div class="row">
+        <div class="col-12">
+
+            <div class="d-flex align-items-sm-center flex-sm-row flex-column my-3">
+                <div class="flex-grow-1">
+                    <h4 class="fs-xl mb-1">
+                        Recherche IA : <span class="text-primary">[[${module.nom}]]</span>
+                    </h4>
+                    <p class="text-muted mb-0">
+                        Posez une question sur les documents de ce module.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Assistant de recherche pédagogique</h4>
+                </div>
+
+                <div class="card-body">
+
+                    <form th:action="@{'/etudiant/modules/' + ${module.id} + '/recherche'}"
+                          method="post">
+
+                        <label class="form-label">Votre question</label>
+
+                        <textarea name="question"
+                                  class="form-control"
+                                  rows="4"
+                                  placeholder="Exemple : Explique moi la tragédie dans Antigone..."
+                                  required></textarea>
+
+                        <button type="submit" class="btn btn-primary mt-3">
+                            Rechercher
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+
+            <div class="card mt-3" th:if="${question != null}">
+                <div class="card-header">
+                    <h4 class="card-title">Question posée</h4>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">[[${question}]]</p>
+                </div>
+            </div>
+
+            <div class="card mt-3" th:if="${reponse != null}">
+                <div class="card-header">
+                    <h4 class="card-title">Réponse IA</h4>
+                </div>
+                <div class="card-body">
+                    <p style="white-space: pre-line;">[[${reponse}]]</p>
+                </div>
+            </div>
+
+            <div class="card mt-3" th:if="${passages != null}">
+                <div class="card-header">
+                    <h4 class="card-title">Passages utilisés</h4>
+                </div>
+
+                <div class="card-body">
+                    <div th:each="p : ${passages}" class="border rounded p-3 mb-2">
+                        <p class="mb-0 text-muted" style="white-space: pre-line;">[[${p}]]</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</th:block>
+</body>
+</html>
